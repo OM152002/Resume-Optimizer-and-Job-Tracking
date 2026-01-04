@@ -56,14 +56,15 @@ jobs:
           printf "%s" "$RCLONE_CONFIG_CONTENT" > ~/.config/rclone/rclone.conf
 
           rclone --config ~/.config/rclone/rclone.conf listremotes
-          rclone --config ~/.config/rclone/rclone.conf about "${{ secrets.RCLONE_REMOTE }}:"
+          rclone --config ~/.config/rclone/rclone.conf about "gdrive:"
+
 
 
       - name: Run pipeline
         env:
           NOTION_TOKEN: ${{ secrets.NOTION_TOKEN }}
           NOTION_DB_ID: ${{ secrets.NOTION_DB_ID }}
-          RCLONE_REMOTE: ${{ secrets.RCLONE_REMOTE }}   # e.g. gdrive
+          RCLONE_REMOTE: gdrive  # e.g. gdrive
           DRIVE_ROOT: ${{ secrets.DRIVE_ROOT }}         # JobApps
           LIMIT: ${{ github.event.inputs.limit }}
           MODEL_NAME: "none"
