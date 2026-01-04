@@ -6,7 +6,7 @@ import uuid
 from datetime import datetime, timezone
 
 from .latex_validate import looks_like_latex_resume
-from .llm_optional import tailor_resume
+from .llm_gemini import generate_apply_pack
 from .notion_client import (
     get_database_schema,
     build_property_index,
@@ -318,7 +318,30 @@ def main():
             continue
 
         try:
-            tailored = tailor_resume(MASTER_LATEX, jd)
+            pack = generate_apply_pack(
+                master_latex=MASTER_LATEX,
+                jd=jd,
+                company=company,
+                role=role,
+                url=url,
+            )
+
+            tailored = pack["tailored_latex"]
+            fit_score = pack["fit_score"]
+            kw_cov = pack["keyword_coverage"]
+
+            outreach = pack["outreach"]
+            outreach_block = "\n\n".join([
+                f"LinkedIn connect note:\n{outreach['linkedin_connect_note']}",
+                f"LinkedIn message:\n{outreach['linkedin_message']}",
+                f"Recruiter email:\n{outreach['recruiter_email']}",
+                f"Follow-up (7d):\n{outreach['followup_7d']}",
+                f"Follow-up (14d):\n{outreach['followup_14d']}",
+            ])
+
+
+            missing = ", ".join(pack.get("missing_keywords", [])[:20])
+
             ok, reason = looks_like_latex_resume(tailored)
 
             if not ok:
@@ -369,6 +392,9 @@ def main():
             info = update_page_safe(page_id, {
                 "Status": "Applied",
                 "Errors": "",
+                "Fit score": fit_score,
+                "Keywork Coverage": kw_cov,
+                "Follow up message": {"rich_text": [{"text": {"content": outreach_block[:2000]}}]},
                 "Run ID": run_id,
                 "Model": model_name,
                 "Prompt version": prompt_version,

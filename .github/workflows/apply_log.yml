@@ -62,6 +62,8 @@ jobs:
 
       - name: Run pipeline
         env:
+          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+          GEMINI_MODEL: gemini-3-pro-preview
           NOTION_TOKEN: ${{ secrets.NOTION_TOKEN }}
           NOTION_DB_ID: ${{ secrets.NOTION_DB_ID }}
           RCLONE_REMOTE: gdrive  # e.g. gdrive
