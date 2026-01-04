@@ -41,7 +41,7 @@ def _patch(url: str, payload: dict) -> dict:
 
 def fetch_queued(limit: int = 5) -> list[dict]:
     payload = {
-        "filter": {"property": "Status", "select": {"equals": "Queued"}},
+        "filter": {"property": "Status", "select": {"equals": "Not Applied"}},
         "page_size": min(max(limit, 1), 20),
         "sorts": [{"timestamp": "created_time", "direction": "ascending"}],
     }
