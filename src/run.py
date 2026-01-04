@@ -248,7 +248,7 @@ def main():
         # Prefer Job URL, fall back to Job Link, then URL
         url = get_url(props.get("Job URL", {})) or get_url(props.get("Job Link", {})) or get_url(props.get("URL", {}))
 
-        jd_prop = props.get("Job Description", {})
+        jd_prop = props.get("Job Description ", {})
         jd = safe_text(jd_prop)
 
         # If JD is empty, mark error and continue
