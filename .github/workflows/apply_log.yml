@@ -24,9 +24,21 @@ jobs:
       - name: Install deps
         run: |
           sudo apt-get update
-          sudo apt-get install -y rclone tectonic
+          sudo apt-get install -y rclone curl tar
           python -m pip install --upgrade pip
           pip install -r requirements.txt
+
+      - name: Install tectonic (binary)
+        run: |
+          set -e
+          mkdir -p /tmp/tectonic
+          cd /tmp/tectonic
+          # Download latest Linux x86_64 tectonic bundle
+          curl -L -o tectonic.tar.gz https://github.com/tectonic-typesetting/tectonic/releases/latest/download/tectonic-x86_64-unknown-linux-gnu.tar.gz
+          tar -xzf tectonic.tar.gz
+          sudo mv tectonic /usr/local/bin/tectonic
+          tectonic --version
+
 
       - name: Configure rclone
         env:
