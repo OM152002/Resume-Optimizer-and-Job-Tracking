@@ -3,7 +3,7 @@ import hashlib
 import requests
 from tenacity import retry, wait_exponential, stop_after_attempt, retry_if_exception_type
 
-NOTION_TOKEN = os.environ["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"]
+NOTION_TOKEN = os.environ["NOTION_TOKEN"]
 NOTION_DB_ID = os.environ["NOTION_DB_ID"]
 
 HEADERS = {
