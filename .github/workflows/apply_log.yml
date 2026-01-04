@@ -70,15 +70,23 @@ jobs:
       - name: Configure rclone
         shell: bash
         env:
-          RCLONE_CONFIG: ${{ secrets.RCLONE_CONFIG }}
+          RCLONE_CONFIG_CONTENT: ${{ secrets.RCLONE_CONFIG }}
         run: |
           set -euo pipefail
           mkdir -p ~/.config/rclone
-          cat > ~/.config/rclone/rclone.conf <<'EOF'
-          ${RCLONE_CONFIG}
-          EOF
-          rclone config show
-          rclone listremotes
+
+          # Write the config content to the real config file
+          printf "%s" "$RCLONE_CONFIG_CONTENT" > ~/.config/rclone/rclone.conf
+
+          # Sanity checks (no secrets printed)
+          test -s ~/.config/rclone/rclone.conf
+          echo "Config bytes: $(wc -c < ~/.config/rclone/rclone.conf)"
+          echo "Config head:"
+          head -n 5 ~/.config/rclone/rclone.conf
+
+          # Force rclone to use this config file explicitly
+          rclone --config ~/.config/rclone/rclone.conf listremotes
+
 
       - name: Run pipeline
         env:
