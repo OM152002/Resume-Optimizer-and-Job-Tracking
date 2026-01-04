@@ -1,0 +1,43 @@
+name: Job Apply Logger
+
+on:
+  workflow_dispatch:
+    inputs:
+      limit:
+        description: "Max queued items to process"
+        required: false
+        default: "5"
+  schedule:
+    - cron: "*/30 * * * *"
+
+jobs:
+  run:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Install deps
+        run: |
+          pip install -r requirements.txt
+
+      - name: Run pipeline
+        env:
+          NOTION_TOKEN: ${{ secrets.NOTION_TOKEN }}
+          NOTION_DB_ID: ${{ secrets.NOTION_DB_ID }}
+          LIMIT: ${{ github.event.inputs.limit }}
+        run: |
+          python -m src.run
+
+      - name: Upload run artifacts
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: run-artifacts
+          path: artifacts/
