@@ -232,7 +232,7 @@ prompt_version = "v1"
 
         company = safe_text(props.get("Company", {}))
         role = safe_text(props.get("Role", {}))
-        url = (props.get("URL", {}) or {}).get("url") or ""
+        url = (props.get("Job URL", {}) or {}).get("url") or ""
         jd = safe_text(props.get("Job Description", {}))
 
         try:
