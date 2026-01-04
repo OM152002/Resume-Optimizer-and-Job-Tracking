@@ -236,21 +236,32 @@ def main():
 
             if not ok:
                 update_page(page_id, {
-                    "Status": {"select": {"name": "Error"}},
-                    "LastRunStatus": {"rich_text": [{"text": {"content": "LATEX_INVALID"}}]},
-                    "LastRunError": {"rich_text": [{"text": {"content": reason[:2000]}}]},
-                })
+    "Status": {"status": {"name": "Error"}},
+    "Errors": {"rich_text": [{"text": {"content": str(e)[:2000]}}]},
+})
                 run_log["errors"] += 1
                 run_log["details"].append({"page": page_id, "status": "error", "reason": reason})
                 run_log["processed"] += 1
                 continue
 
             update_page(page_id, {
-                "GeneratedLatex": {"rich_text": [{"text": {"content": tailored[:2000]}}]},
-                "Status": {"select": {"name": "Applied"}},
-                "LastRunStatus": {"rich_text": [{"text": {"content": "OK"}}]},
-                "LastRunError": {"rich_text": [{"text": {"content": ""}}]},
-            })
+    # Status is a Notion "Status" property, not Select:
+    "Status": {"status": {"name": "Applied"}},
+
+    # Your DB property names:
+    "Latex": {"rich_text": [{"text": {"content": tailored[:2000]}}]},
+
+    # Optional: write keyword coverage if you compute it later
+    # "Keywork Coverage": {"number": keyword_coverage},
+
+    # Optional: run metadata if these properties exist (they do in your screenshot)
+    "Run ID": {"rich_text": [{"text": {"content": run_id}}]},
+    "Model": {"rich_text": [{"text": {"content": model_name}}]},
+    "Prompt version": {"rich_text": [{"text": {"content": prompt_version}}]},
+
+    # Clear Errors if it exists
+    "Errors": {"rich_text": [{"text": {"content": ""}}]},
+})
 
             fname = f"{company}_{role}".replace(" ", "_")[:80] or page_id
             (ART_DIR / f"{fname}.tex").write_text(tailored, encoding="utf-8")
