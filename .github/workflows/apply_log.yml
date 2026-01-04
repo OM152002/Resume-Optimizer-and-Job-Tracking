@@ -4,16 +4,14 @@ on:
   workflow_dispatch:
     inputs:
       limit:
-        description: "Max queued items to process"
-        required: false
-        default: "5"
-  schedule:
-    - cron: "*/30 * * * *"
+        description: "Max number of Not Applied rows to process"
+        required: true
+        default: "1"
 
 jobs:
   run:
     runs-on: ubuntu-latest
-    timeout-minutes: 10
+
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -27,6 +25,7 @@ jobs:
         run: |
           sudo apt-get update
           sudo apt-get install -y rclone tectonic
+          python -m pip install --upgrade pip
           pip install -r requirements.txt
 
       - name: Configure rclone
@@ -41,17 +40,16 @@ jobs:
         env:
           NOTION_TOKEN: ${{ secrets.NOTION_TOKEN }}
           NOTION_DB_ID: ${{ secrets.NOTION_DB_ID }}
-          RCLONE_REMOTE: ${{ secrets.RCLONE_REMOTE }}
-          DRIVE_ROOT: ${{ secrets.DRIVE_ROOT }}
-          LIMIT: 1
+          RCLONE_REMOTE: ${{ secrets.RCLONE_REMOTE }}   # e.g. gdrive
+          DRIVE_ROOT: ${{ secrets.DRIVE_ROOT }}         # JobApps
+          LIMIT: ${{ github.event.inputs.limit }}
+          MODEL_NAME: "none"
+          PROMPT_VERSION: "v1"
         run: |
           python -m src.run
 
       - name: Upload run artifacts
-        if: always()
         uses: actions/upload-artifact@v4
         with:
           name: run-artifacts
           path: artifacts/
-
-

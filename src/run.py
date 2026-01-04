@@ -1,6 +1,7 @@
 import os
 import json
 import pathlib
+import subprocess
 import uuid
 from datetime import datetime, timezone
 
@@ -16,6 +17,7 @@ from .notion_client import (
 ART_DIR = pathlib.Path("artifacts")
 ART_DIR.mkdir(exist_ok=True)
 
+# IMPORTANT: Replace this with your full master LaTeX template
 MASTER_LATEX = r"""
 \documentclass[10.5pt]{article}
 \usepackage[margin=0.4in, bottom=0.4in, top=0.5in]{geometry}
@@ -184,37 +186,76 @@ Ganpat University, Mehsana, Gujarat, India \hfill GPA: 8.07/10
 \end{document}
 """.strip()
 
+
+def sh(cmd: list[str], cwd: str | None = None) -> str:
+    r = subprocess.run(cmd, check=True, capture_output=True, text=True, cwd=cwd)
+    return (r.stdout or "").strip()
+
+
 def safe_text(prop) -> str:
     """
-    Reads text from Notion properties safely across types:
-    - title
-    - rich_text
-    - (handles empty/None)
+    Read Notion text from title/rich_text.
     """
     try:
         if not prop:
             return ""
-        # title
-        if prop.get("type") == "title":
+        t = prop.get("type")
+
+        if t == "title":
             parts = prop.get("title") or []
             return "".join([p.get("plain_text", "") for p in parts])
 
-        # rich_text
-        if prop.get("type") == "rich_text":
+        if t == "rich_text":
             parts = prop.get("rich_text") or []
             return "".join([p.get("plain_text", "") for p in parts])
 
-        # fallback: some Notion responses include keys directly
         parts = prop.get("rich_text") or prop.get("title") or []
         return "".join([p.get("plain_text", "") for p in parts])
     except Exception:
         return ""
 
+
 def get_url(prop) -> str:
     try:
-        return prop.get("url") or ""
+        return (prop or {}).get("url") or ""
     except Exception:
         return ""
+
+
+def clean_path_segment(s: str) -> str:
+    s = (s or "").strip().replace("/", "-").replace("\\", "-")
+    s = "_".join(s.split())
+    return s[:80] if s else "Unknown"
+
+
+def find_prop(props: dict, candidates: list[str]):
+    """
+    Return the first matching property object in props.
+    Handles trailing spaces and case by checking common variants.
+    """
+    # direct checks
+    for c in candidates:
+        if c in props:
+            return props[c]
+
+    # tolerant checks: normalize keys
+    def norm(x: str) -> str:
+        return " ".join((x or "").strip().lower().split())
+
+    props_norm = {norm(k): k for k in props.keys()}
+    for c in candidates:
+        nk = norm(c)
+        if nk in props_norm:
+            return props[props_norm[nk]]
+
+    # trailing-space variants
+    for c in candidates:
+        for k in props.keys():
+            if k.strip() == c.strip():
+                return props[k]
+
+    return None
+
 
 def main():
     limit = int(os.getenv("LIMIT") or "5")
@@ -223,10 +264,13 @@ def main():
     model_name = os.getenv("MODEL_NAME", "none")
     prompt_version = os.getenv("PROMPT_VERSION", "v1")
 
+    remote = os.environ["RCLONE_REMOTE"]          # e.g. gdrive
+    drive_root = os.environ.get("DRIVE_ROOT", "JobApps")
+
     schema = get_database_schema()
     idx = build_property_index(schema)
 
-    # Trigger state is "Not Applied"
+    # Trigger state
     items = fetch_by_status("Not Applied", limit=limit, idx=idx)
 
     run_log = {
@@ -240,29 +284,37 @@ def main():
 
     for page in items:
         page_id = page["id"]
-        props = page.get("properties", {})
+        job_id = page_id.replace("-", "")
+        props = page.get("properties", {}) or {}
 
-        company = safe_text(props.get("Company", {}))
-        role = safe_text(props.get("Role", {}))
+        company = safe_text(find_prop(props, ["Company"]) or {})
+        role = safe_text(find_prop(props, ["Role"]) or {})
 
-        # Prefer Job URL, fall back to Job Link, then URL
-        url = get_url(props.get("Job URL", {})) or get_url(props.get("Job Link", {})) or get_url(props.get("URL", {}))
+        url = (
+            get_url(find_prop(props, ["Job URL"]) or {})
+            or get_url(find_prop(props, ["Job Link"]) or {})
+            or get_url(find_prop(props, ["URL"]) or {})
+        )
 
-        jd_prop = props.get("Job Description ", {})
-        jd = safe_text(jd_prop)
+        jd = safe_text(find_prop(props, ["Job Description", "JD", "Description"]) or {})
 
-        # If JD is empty, mark error and continue
         if not jd.strip():
             info = update_page_safe(page_id, {
                 "Status": "Error",
-                "Errors": "Job Description is empty",
+                "Errors": "Job Description is empty or unreadable by API",
                 "Run ID": run_id,
                 "Model": model_name,
                 "Prompt version": prompt_version,
             }, idx)
+
             run_log["errors"] += 1
             run_log["processed"] += 1
-            run_log["details"].append({"page": page_id, "status": "error", "reason": "empty_jd", "notion": info})
+            run_log["details"].append({
+                "page": page_id,
+                "status": "error",
+                "reason": "empty_jd",
+                "notion": info
+            })
             continue
 
         try:
@@ -277,30 +329,51 @@ def main():
                     "Model": model_name,
                     "Prompt version": prompt_version,
                 }, idx)
+
                 run_log["errors"] += 1
                 run_log["processed"] += 1
-                run_log["details"].append({"page": page_id, "status": "error", "reason": reason, "notion": info})
+                run_log["details"].append({
+                    "page": page_id,
+                    "status": "error",
+                    "reason": reason,
+                    "notion": info
+                })
                 continue
 
-            # Write tex file with constant filename inside a per-application folder
-            safe_folder = f"{company}_{role}".replace("/", "-").replace("\\", "-").strip()
-            safe_folder = "_".join(safe_folder.split())[:80] or page_id
-            out_dir = ART_DIR / safe_folder
+            # Local artifact folder per job (prevents overwrites, constant filename)
+            out_dir = ART_DIR / f"{clean_path_segment(company)}_{clean_path_segment(role)}"
             out_dir.mkdir(parents=True, exist_ok=True)
 
             tex_path = out_dir / "Poojan_Vanani_Resume.tex"
             tex_path.write_text(tailored, encoding="utf-8")
 
-            # Update Notion (write into Latex or Resume Latex if it exists; update_page_safe handles it)
+            # Compile PDF (ATS-friendly)
+            sh(["tectonic", tex_path.name, "--outdir", "."], cwd=str(out_dir))
+
+            pdf_path = out_dir / "Poojan_Vanani_Resume.pdf"
+            if not pdf_path.exists():
+                raise RuntimeError("tectonic did not generate Poojan_Vanani_Resume.pdf")
+
+            # Drive destination directory: JobApps/<Company>/<Role>/<pageid>
+            dest_dir = f"{drive_root}/{clean_path_segment(company)}/{clean_path_segment(role)}/{job_id}"
+
+            # Upload to Drive + get links
+            sh(["rclone", "mkdir", f"{remote}:{dest_dir}"])
+            sh(["rclone", "copyto", str(pdf_path), f"{remote}:{dest_dir}/{pdf_path.name}"])
+            sh(["rclone", "copyto", str(tex_path), f"{remote}:{dest_dir}/{tex_path.name}"])
+
+            pdf_link = sh(["rclone", "link", f"{remote}:{dest_dir}/{pdf_path.name}"])
+            tex_link = sh(["rclone", "link", f"{remote}:{dest_dir}/{tex_path.name}"])
+
+            # Update Notion with links (use your URL columns)
             info = update_page_safe(page_id, {
                 "Status": "Applied",
                 "Errors": "",
                 "Run ID": run_id,
                 "Model": model_name,
                 "Prompt version": prompt_version,
-                # Support both names; whichever exists will be updated
-                "Latex": tailored[:2000],
-                "Resume Latex": tailored[:2000],
+                "Resume PDF": pdf_link,
+                "Resume Latex": tex_link,
             }, idx)
 
             run_log["ok"] += 1
@@ -312,6 +385,9 @@ def main():
                 "role": role,
                 "url": url,
                 "tex": str(tex_path),
+                "pdf": str(pdf_path),
+                "drive_pdf": pdf_link,
+                "drive_tex": tex_link,
                 "notion": info
             })
 
@@ -323,11 +399,18 @@ def main():
                 "Model": model_name,
                 "Prompt version": prompt_version,
             }, idx)
+
             run_log["errors"] += 1
             run_log["processed"] += 1
-            run_log["details"].append({"page": page_id, "status": "error", "reason": str(e), "notion": info})
+            run_log["details"].append({
+                "page": page_id,
+                "status": "error",
+                "reason": str(e),
+                "notion": info
+            })
 
     (ART_DIR / "run_log.json").write_text(json.dumps(run_log, indent=2), encoding="utf-8")
+
 
 if __name__ == "__main__":
     main()

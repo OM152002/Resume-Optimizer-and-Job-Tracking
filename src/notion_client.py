@@ -18,14 +18,9 @@ class NotionError(Exception):
     pass
 
 def normalize_name(s: str) -> str:
-    # case-insensitive, collapse whitespace
     s = (s or "").strip().lower()
     s = re.sub(r"\s+", " ", s)
     return s
-
-def make_app_key(company: str, role: str, url: str) -> str:
-    s = (company.strip().lower() + "|" + role.strip().lower() + "|" + (url or "").strip())
-    return hashlib.sha256(s.encode("utf-8")).hexdigest()
 
 @retry(wait=wait_exponential(min=1, max=20), stop=stop_after_attempt(6),
        retry=retry_if_exception_type(NotionError))
@@ -61,7 +56,6 @@ def get_database_schema() -> dict:
     return _get(f"https://api.notion.com/v1/databases/{NOTION_DB_ID}")
 
 def build_property_index(schema: dict) -> Dict[str, Tuple[str, dict]]:
-    # returns normalized_name -> (actual_name, prop_schema)
     props = schema.get("properties", {}) or {}
     idx: Dict[str, Tuple[str, dict]] = {}
     for actual_name, prop_schema in props.items():
@@ -72,10 +66,6 @@ def resolve_prop(idx: Dict[str, Tuple[str, dict]], name: str) -> Optional[Tuple[
     return idx.get(normalize_name(name))
 
 def set_prop_value(prop_schema: dict, value: Any) -> dict:
-    """
-    Build Notion "properties" payload for a single property based on its type.
-    Supports: title, rich_text, url, number, select, status.
-    """
     ptype = prop_schema.get("type")
 
     if ptype == "title":
@@ -88,28 +78,17 @@ def set_prop_value(prop_schema: dict, value: Any) -> dict:
         return {"url": str(value) if value else None}
 
     if ptype == "number":
-        # accept float/int
         return {"number": None if value is None else float(value)}
 
     if ptype == "select":
-        # value must be the option name
         return {"select": {"name": str(value)}}
 
     if ptype == "status":
-        # value must be the status name
         return {"status": {"name": str(value)}}
 
-    # Fallback: don’t crash; caller can skip
     raise ValueError(f"Unsupported property type: {ptype}")
 
 def update_page_safe(page_id: str, desired: Dict[str, Any], idx: Dict[str, Tuple[str, dict]]) -> Dict[str, Any]:
-    """
-    Update page properties safely:
-    - resolves property names against DB schema
-    - uses correct property type builder
-    - skips missing/unsupported properties
-    Returns a dict with 'updated' and 'skipped' lists for logging.
-    """
     out: Dict[str, Any] = {"updated": [], "skipped": []}
     props_payload: Dict[str, Any] = {}
 
@@ -133,9 +112,6 @@ def update_page_safe(page_id: str, desired: Dict[str, Any], idx: Dict[str, Tuple
     return out
 
 def fetch_by_status(status_name: str, limit: int, idx: Dict[str, Tuple[str, dict]]) -> list[dict]:
-    """
-    Query DB for rows where Status == status_name using correct Status type (status/select).
-    """
     resolved = resolve_prop(idx, "Status")
     if not resolved:
         raise NotionError("Database has no 'Status' property")
