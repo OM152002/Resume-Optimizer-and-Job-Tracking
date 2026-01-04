@@ -256,12 +256,9 @@ def sanitize_latex(latex: str) -> str:
 
 
 def compile_pdf(tex_path: pathlib.Path) -> pathlib.Path:
-    """
-    Runs tectonic and returns path to PDF. Raises RuntimeError with stderr snippet on failure.
-    """
     out_dir = tex_path.parent
     try:
-        r = subprocess.run(
+        subprocess.run(
             ["tectonic", tex_path.name, "--outdir", "."],
             cwd=str(out_dir),
             check=True,
@@ -269,14 +266,15 @@ def compile_pdf(tex_path: pathlib.Path) -> pathlib.Path:
             text=True,
         )
     except subprocess.CalledProcessError as e:
-        combined = (e.stdout or "") + "\n" + (e.stderr or "")
-        combined = combined.strip()
-        raise RuntimeError("tectonic_failed:\n" + combined[:1800]) from e
+        combined = ((e.stdout or "") + "\n" + (e.stderr or "")).strip()
+        tail = combined[-1800:] if len(combined) > 1800 else combined
+        raise RuntimeError("tectonic_failed:\n" + tail) from e
 
     pdf_path = out_dir / tex_path.with_suffix(".pdf").name
     if not pdf_path.exists():
         raise RuntimeError("tectonic_failed: PDF not produced")
     return pdf_path
+
 
 
 def main():
