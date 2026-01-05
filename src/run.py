@@ -45,9 +45,7 @@ MASTER_LATEX = r"""
 
 \hrule
 \begin{center}
-
 \small
-
     +1 (224)400-2468 
     \quad \href{mailto:poojan.vanani1900@gmail.com}{poojan.vanani1900@gmail.com}  
     \quad \href{https://www.linkedin.com/in/poojan-vanani}{www.linkedin.com/in/poojan-vanani} 
@@ -74,7 +72,6 @@ Arizona State University, Tempe, AZ \hfill GPA: 3.47/4.00
 Ganpat University, Mehsana, Gujarat, India \hfill GPA: 8.07/10 
 
 \vspace{-10pt}
-
 \section*{TECHNICAL SKILLS}
 \vspace{-5pt}
 \hrule
@@ -90,7 +87,6 @@ Ganpat University, Mehsana, Gujarat, India \hfill GPA: 8.07/10
 \end{itemize}
 
 \vspace{-10pt}
-
 \section*{PROFESSIONAL EXPERIENCE}
 \vspace{-5pt}
 \hrule
@@ -224,34 +220,42 @@ def find_prop(props: dict, candidates: list[str]):
 def normalize_unicode(s: str) -> str:
     if not s:
         return s
-    # Replace common ATS/LLM unicode that breaks LaTeX or fonts
-    s = s.replace("\u2013", "-").replace("\u2014", "-")  # en/em dash
-    s = s.replace("\u2018", "'").replace("\u2019", "'")  # smart apostrophes
-    s = s.replace("\u201c", '"').replace("\u201d", '"')  # smart quotes
-    s = s.replace("\u2022", "-")  # bullet
-    s = s.replace("\u00d7", "x")  # multiplication
-    s = s.replace("\u00a0", " ")  # non-breaking space
-    return s
+    return (
+        s.replace("\u2013", "-")
+        .replace("\u2014", "-")
+        .replace("\u2018", "'")
+        .replace("\u2019", "'")
+        .replace("\u201c", '"')
+        .replace("\u201d", '"')
+        .replace("\u2022", "-")
+        .replace("\u00d7", "x")
+        .replace("\u00a0", " ")
+    )
 
 
-def escape_unescaped_chars(latex: str) -> str:
+def escape_tex_specials(latex: str) -> str:
     """
-    Escape common LaTeX special chars if not already escaped.
-    Conservative: only escapes when not preceded by backslash.
+    Robust escaping for special characters that frequently break AI-generated LaTeX.
+    Escapes only when NOT already escaped.
     """
-    def esc(ch: str):
-        return re.sub(rf"(?<!\\)\{re.escape(ch)}", rf"\\{ch}", latex)
-
-    # Order matters: backslash itself not touched; we escape others.
+    # Escape & % $ # _
+    replacements = {
+        "&": r"\&",
+        "%": r"\%",
+        "$": r"\$",
+        "#": r"\#",
+        "_": r"\_",
+    }
     out = latex
-    for ch in ["&", "%", "$", "#", "_"]:
-        out = re.sub(rf"(?<!\\)\{re.escape(ch)}", rf"\\{ch}", out)
+    for ch, rep in replacements.items():
+        # replace any occurrence not preceded by backslash
+        out = re.sub(rf"(?<!\\){re.escape(ch)}", rep, out)
     return out
 
 
 def sanitize_latex(latex: str) -> str:
     latex = normalize_unicode(latex)
-    latex = escape_unescaped_chars(latex)
+    latex = escape_tex_specials(latex)
     return latex
 
 
@@ -274,7 +278,6 @@ def compile_pdf(tex_path: pathlib.Path) -> pathlib.Path:
     if not pdf_path.exists():
         raise RuntimeError("tectonic_failed: PDF not produced")
     return pdf_path
-
 
 
 def main():
@@ -379,7 +382,6 @@ def main():
                 )
                 continue
 
-            # Local artifact folder per company/role (constant filenames inside)
             out_dir = ART_DIR / f"{clean_path_segment(company)}_{clean_path_segment(role)}"
             out_dir.mkdir(parents=True, exist_ok=True)
 
