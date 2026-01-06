@@ -5,55 +5,97 @@ import requests
 from typing import Any, Dict, Tuple, Optional
 from tenacity import retry, wait_exponential, stop_after_attempt, retry_if_exception_type
 
-NOTION_TOKEN = os.environ["NOTION_TOKEN"]
-NOTION_DB_ID = os.environ["NOTION_DB_ID"]
-
-HEADERS = {
-    "Authorization": f"Bearer {NOTION_TOKEN}",
-    "Notion-Version": "2022-06-28",
-    "Content-Type": "application/json",
-}
 
 class NotionError(Exception):
     pass
+
+
+class NotionRetryableError(NotionError):
+    pass
+
+
+def _clean_env_value(value: str) -> str:
+    value = (value or "").strip()
+    if (value.startswith('"') and value.endswith('"')) or (
+        value.startswith("'") and value.endswith("'")
+    ):
+        value = value[1:-1].strip()
+    return value
+
+
+def _get_env_required(name: str) -> str:
+    value = _clean_env_value(os.environ.get(name, ""))
+    if not value:
+        raise NotionError(f"Missing required environment variable: {name}")
+    return value
+
+
+def _get_notion_token() -> str:
+    token = _get_env_required("NOTION_TOKEN")
+    if token.lower().startswith("bearer "):
+        token = token[7:].strip()
+    return token
+
+
+def _get_notion_db_id() -> str:
+    return _get_env_required("NOTION_DB_ID")
+
+
+def _get_headers() -> dict:
+    return {
+        "Authorization": f"Bearer {_get_notion_token()}",
+        "Notion-Version": "2022-06-28",
+        "Content-Type": "application/json",
+    }
+
+
+def _raise_for_status(r: requests.Response) -> None:
+    if r.status_code == 429:
+        raise NotionRetryableError("Rate limited (429)")
+    if 500 <= r.status_code < 600:
+        raise NotionRetryableError(f"Notion server error {r.status_code}: {r.text}")
+    if not r.ok:
+        if r.status_code == 401:
+            raise NotionError("Notion unauthorized (401). Check NOTION_TOKEN.")
+        raise NotionError(f"Notion error {r.status_code}: {r.text}")
 
 def normalize_name(s: str) -> str:
     s = (s or "").strip().lower()
     s = re.sub(r"\s+", " ", s)
     return s
 
-@retry(wait=wait_exponential(min=1, max=20), stop=stop_after_attempt(6),
-       retry=retry_if_exception_type(NotionError))
+@retry(
+    wait=wait_exponential(min=1, max=20),
+    stop=stop_after_attempt(6),
+    retry=retry_if_exception_type(NotionRetryableError),
+)
 def _get(url: str) -> dict:
-    r = requests.get(url, headers=HEADERS, timeout=30)
-    if r.status_code == 429:
-        raise NotionError("Rate limited (429)")
-    if not r.ok:
-        raise NotionError(f"Notion error {r.status_code}: {r.text}")
+    r = requests.get(url, headers=_get_headers(), timeout=30)
+    _raise_for_status(r)
     return r.json()
 
-@retry(wait=wait_exponential(min=1, max=20), stop=stop_after_attempt(6),
-       retry=retry_if_exception_type(NotionError))
+@retry(
+    wait=wait_exponential(min=1, max=20),
+    stop=stop_after_attempt(6),
+    retry=retry_if_exception_type(NotionRetryableError),
+)
 def _post(url: str, payload: dict) -> dict:
-    r = requests.post(url, headers=HEADERS, json=payload, timeout=30)
-    if r.status_code == 429:
-        raise NotionError("Rate limited (429)")
-    if not r.ok:
-        raise NotionError(f"Notion error {r.status_code}: {r.text}")
+    r = requests.post(url, headers=_get_headers(), json=payload, timeout=30)
+    _raise_for_status(r)
     return r.json()
 
-@retry(wait=wait_exponential(min=1, max=20), stop=stop_after_attempt(6),
-       retry=retry_if_exception_type(NotionError))
+@retry(
+    wait=wait_exponential(min=1, max=20),
+    stop=stop_after_attempt(6),
+    retry=retry_if_exception_type(NotionRetryableError),
+)
 def _patch(url: str, payload: dict) -> dict:
-    r = requests.patch(url, headers=HEADERS, json=payload, timeout=30)
-    if r.status_code == 429:
-        raise NotionError("Rate limited (429)")
-    if not r.ok:
-        raise NotionError(f"Notion error {r.status_code}: {r.text}")
+    r = requests.patch(url, headers=_get_headers(), json=payload, timeout=30)
+    _raise_for_status(r)
     return r.json()
 
 def get_database_schema() -> dict:
-    return _get(f"https://api.notion.com/v1/databases/{NOTION_DB_ID}")
+    return _get(f"https://api.notion.com/v1/databases/{_get_notion_db_id()}")
 
 def build_property_index(schema: dict) -> Dict[str, Tuple[str, dict]]:
     props = schema.get("properties", {}) or {}
@@ -131,5 +173,7 @@ def fetch_by_status(status_name: str, limit: int, idx: Dict[str, Tuple[str, dict
         "page_size": min(max(limit, 1), 20),
         "sorts": [{"timestamp": "created_time", "direction": "ascending"}],
     }
-    data = _post(f"https://api.notion.com/v1/databases/{NOTION_DB_ID}/query", payload)
+    data = _post(
+        f"https://api.notion.com/v1/databases/{_get_notion_db_id()}/query", payload
+    )
     return data.get("results", [])
