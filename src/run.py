@@ -162,6 +162,11 @@ Ganpat University, Mehsana, Gujarat, India \hfill GPA: 8.07/10
 """.strip()
 
 
+def chunk_rich_text(s: str, chunk: int = 1900):
+    s = s or ""
+    return [{"text": {"content": s[i:i+chunk]}} for i in range(0, min(len(s), 6000), chunk)]
+
+
 def sh(cmd: list[str], cwd: str | None = None) -> str:
     r = subprocess.run(cmd, check=True, capture_output=True, text=True, cwd=cwd)
     return (r.stdout or "").strip()
@@ -459,7 +464,7 @@ def main():
                     "Errors": "",
                     "Fit score": float(fit_score),
                     "Keywork Coverage": float(kw_cov),
-                    "Follow up message": {"rich_text": [{"text": {"content": outreach_block[:2000]}}]},
+                    "Follow up message": {"rich_text": chunk_rich_text(outreach_block)},
                     "Run ID": run_id,
                     "Model": model_name,
                     "Prompt version": prompt_version,
