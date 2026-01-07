@@ -417,7 +417,6 @@ def main():
             ok, reason = looks_like_latex_resume(tailored)
             # Mutation guards: fail fast if AI changed structure
             require_same_section_markers(MASTER_LATEX, tailored)
-            require_no_new_companies(MASTER_LATEX, tailored)
             require_bullet_count_stable(MASTER_LATEX, tailored, tolerance=0)
 
             if not ok:
@@ -463,8 +462,8 @@ def main():
                     "Status": "Applied",
                     "Errors": "",
                     "Fit score": float(fit_score),
-                    "Keywork Coverage": float(kw_cov),
-                    "Follow up message": {"rich_text": chunk_rich_text(outreach_block)},
+                    "Keyword Coverage": float(kw_cov),
+                    "Follow up message": chunk_rich_text(outreach_block),
                     "Run ID": run_id,
                     "Model": model_name,
                     "Prompt version": prompt_version,

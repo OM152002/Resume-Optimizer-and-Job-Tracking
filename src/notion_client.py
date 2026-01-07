@@ -61,6 +61,9 @@ def _raise_for_status(r: requests.Response) -> None:
 
 def normalize_name(s: str) -> str:
     s = (s or "").strip().lower()
+    # make matching resilient: "Follow-up message" == "Follow up message"
+    s = s.replace("-", " ").replace("_", " ")
+    s = re.sub(r"[^\w\s]", "", s)   # drop punctuation
     s = re.sub(r"\s+", " ", s)
     return s
 
@@ -111,9 +114,19 @@ def set_prop_value(prop_schema: dict, value: Any) -> dict:
     ptype = prop_schema.get("type")
 
     if ptype == "title":
+        # allow passing a pre-built Notion title payload or list
+        if isinstance(value, dict) and "title" in value:
+            return value
+        if isinstance(value, list):
+            return {"title": value}
         return {"title": [{"text": {"content": str(value)}}]}
 
     if ptype == "rich_text":
+        # allow passing a pre-built Notion rich_text payload or list
+        if isinstance(value, dict) and "rich_text" in value:
+            return value
+        if isinstance(value, list):
+            return {"rich_text": value}
         return {"rich_text": [{"text": {"content": str(value)}}]}
 
     if ptype == "url":

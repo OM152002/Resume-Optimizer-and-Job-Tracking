@@ -55,13 +55,14 @@ jobs:
         shell: bash
         env:
           RCLONE_CONFIG_CONTENT: ${{ secrets.RCLONE_CONFIG }}
+          RCLONE_REMOTE: ${{ secrets.RCLONE_REMOTE }}
         run: |
           set -euo pipefail
           mkdir -p ~/.config/rclone
           printf "%s" "$RCLONE_CONFIG_CONTENT" > ~/.config/rclone/rclone.conf
 
           rclone --config ~/.config/rclone/rclone.conf listremotes
-          rclone --config ~/.config/rclone/rclone.conf about "gdrive:"
+          rclone --config ~/.config/rclone/rclone.conf about "${RCLONE_REMOTE}:"
 
 
 
@@ -71,7 +72,7 @@ jobs:
           GEMINI_MODEL: gemini-2.5-flash
           NOTION_TOKEN: ${{ secrets.NOTION_TOKEN }}
           NOTION_DB_ID: ${{ secrets.NOTION_DB_ID }}
-          RCLONE_REMOTE: gdrive  # e.g. gdrive
+          RCLONE_REMOTE: ${{ secrets.RCLONE_REMOTE }}
           DRIVE_ROOT: ${{ secrets.DRIVE_ROOT }}         # JobApps
           LIMIT: ${{ github.event.inputs.limit }}
           MODEL_NAME: "none"
