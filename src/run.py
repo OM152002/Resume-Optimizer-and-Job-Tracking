@@ -432,8 +432,17 @@ def main():
                 role=role,
                 url=url,
             )
+            required = ["tailored_latex", "fit_score", "keyword_coverage", "outreach"]
+            missing = [k for k in required if k not in pack]
+            if missing:
+                raise RuntimeError(
+                    f"LLM JSON missing fields: {missing}. Keys={list(pack.keys())}"
+                )
 
-            tailored_latex = pack["tailored_latex"]
+            tailored_raw = pack.get("tailored_latex") or ""
+            if not tailored_raw:
+                raise RuntimeError("LLM output missing 'tailored_latex' field.")
+            tailored_latex = sanitize_latex(tailored_raw)
             fit_score = pack.get("fit_score", 0)
             kw_cov = pack.get("keyword_coverage", 0)
 
@@ -448,7 +457,6 @@ def main():
                 ]
             )
 
-            tailored_latex = sanitize_latex(tailored_latex)
             ok, reason = looks_like_latex_resume(tailored_latex)
             # Mutation guards: fail fast if AI changed structure
             require_same_section_markers(MASTER_LATEX, tailored_latex)
