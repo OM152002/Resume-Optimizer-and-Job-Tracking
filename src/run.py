@@ -269,10 +269,35 @@ def escape_tex_specials(latex: str) -> str:
     return out
 
 
-def sanitize_latex(latex: str) -> str:
-    latex = normalize_unicode(latex)
-    latex = escape_tex_specials(latex)
-    return latex
+def sanitize_latex(tex: str) -> str:
+    if tex is None:
+        return ""
+    tex = tex.lstrip("\ufeff")  # strip UTF-8 BOM
+    tex = tex.strip()
+
+    # remove markdown code fences if present
+    tex = re.sub(r"^\s*```[a-zA-Z0-9_-]*\s*\n", "", tex)
+    tex = re.sub(r"\n\s*```\s*$", "", tex)
+
+    # if model accidentally drops leading backslash on the first line
+    lines = tex.splitlines()
+    if lines:
+        l0 = lines[0].lstrip()
+        if l0.startswith("documentclass"):
+            lines[0] = lines[0].replace("documentclass", r"\documentclass", 1)
+        if l0.startswith("usepackage"):
+            lines[0] = lines[0].replace("usepackage", r"\usepackage", 1)
+    tex = "\n".join(lines)
+
+    # hard fail early with a clearer error
+    if not tex.lstrip().startswith(r"\documentclass"):
+        head = "\n".join(tex.splitlines()[:5])
+        raise RuntimeError(
+            "Generated LaTeX does not start with \\documentclass. First lines:\n"
+            + head
+        )
+
+    return tex
 
 def count_itemize_items(latex: str) -> int:
     # counts \item occurrences (rough but effective for mutation control)
@@ -408,7 +433,7 @@ def main():
                 url=url,
             )
 
-            tailored = sanitize_latex(pack["tailored_latex"])
+            tailored_latex = pack["tailored_latex"]
             fit_score = pack.get("fit_score", 0)
             kw_cov = pack.get("keyword_coverage", 0)
 
@@ -423,10 +448,11 @@ def main():
                 ]
             )
 
-            ok, reason = looks_like_latex_resume(tailored)
+            tailored_latex = sanitize_latex(tailored_latex)
+            ok, reason = looks_like_latex_resume(tailored_latex)
             # Mutation guards: fail fast if AI changed structure
-            require_same_section_markers(MASTER_LATEX, tailored)
-            require_bullet_count_stable(MASTER_LATEX, tailored, tolerance=0)
+            require_same_section_markers(MASTER_LATEX, tailored_latex)
+            require_bullet_count_stable(MASTER_LATEX, tailored_latex, tolerance=0)
 
             if not ok:
                 info = update_page_safe(
@@ -451,7 +477,7 @@ def main():
             out_dir.mkdir(parents=True, exist_ok=True)
 
             tex_path = out_dir / "Poojan_Vanani_Resume.tex"
-            tex_path.write_text(tailored, encoding="utf-8")
+            tex_path.write_text(tailored_latex, encoding="utf-8")
 
             pdf_path = compile_pdf(tex_path)
 
