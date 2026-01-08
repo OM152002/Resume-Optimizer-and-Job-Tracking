@@ -275,7 +275,8 @@ def sanitize_latex(latex: str) -> str:
 
 def count_itemize_items(latex: str) -> int:
     # counts \item occurrences (rough but effective for mutation control)
-    return len(re.findall(r"(?m)^\s*\\item\b", latex))
+    # count \item anywhere (LLMs sometimes inline \item after \begin{itemize})
+    return len(re.findall(r"\\item\b", latex))
 
 def require_same_section_markers(master: str, tailored: str) -> None:
     required = [
