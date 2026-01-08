@@ -7,7 +7,7 @@ body:
     id: company
     attributes:
       label: Company
-      placeholder: Syenta
+      placeholder: Company name
     validations:
       required: true
 
