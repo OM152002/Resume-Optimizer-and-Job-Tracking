@@ -273,12 +273,20 @@ def escape_tex_specials(latex: str) -> str:
 def sanitize_latex(tex: str) -> str:
     if tex is None:
         return ""
-    tex = tex.lstrip("\ufeff")  # strip UTF-8 BOM
+    tex = tex.replace("\ufeff", "").replace("\x00", "")
     tex = tex.strip()
 
     # remove markdown code fences if present
     tex = re.sub(r"^\s*```[a-zA-Z0-9_-]*\s*\n", "", tex)
     tex = re.sub(r"\n\s*```\s*$", "", tex)
+
+    # trim to document boundaries if present
+    start = tex.find(r"\documentclass")
+    if start != -1:
+        tex = tex[start:]
+    end = tex.rfind(r"\end{document}")
+    if end != -1:
+        tex = tex[: end + len(r"\end{document}")]
 
     # if model accidentally drops leading backslash on the first line
     lines = tex.splitlines()
@@ -290,6 +298,9 @@ def sanitize_latex(tex: str) -> str:
             lines[0] = lines[0].replace("usepackage", r"\usepackage", 1)
     tex = "\n".join(lines)
 
+    tex = normalize_unicode(tex)
+    tex = escape_tex_specials(tex)
+
     # hard fail early with a clearer error
     if not tex.lstrip().startswith(r"\documentclass"):
         head = "\n".join(tex.splitlines()[:5])
@@ -297,6 +308,8 @@ def sanitize_latex(tex: str) -> str:
             "Generated LaTeX does not start with \\documentclass. First lines:\n"
             + head
         )
+    if r"\end{document}" not in tex:
+        raise RuntimeError("Generated LaTeX missing \\end{document}.")
 
     return tex
 
