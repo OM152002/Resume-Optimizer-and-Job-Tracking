@@ -55,14 +55,33 @@ jobs:
         shell: bash
         env:
           RCLONE_CONFIG_CONTENT: ${{ secrets.RCLONE_CONFIG }}
-          RCLONE_REMOTE: ${{ secrets.RCLONE_REMOTE }}
         run: |
           set -euo pipefail
           mkdir -p ~/.config/rclone
+
+          # Write the config safely
           printf "%s" "$RCLONE_CONFIG_CONTENT" > ~/.config/rclone/rclone.conf
 
-          RCLONE_REMOTE_CLEAN="$(printf "%s" "${RCLONE_REMOTE}" | tr -d '\r\n\t' | sed 's/:$//' | xargs)"
-          rclone --config ~/.config/rclone/rclone.conf about "${RCLONE_REMOTE_CLEAN}:"
+          # Get remotes from rclone itself (this cannot return token lines)
+          REMOTES="$(rclone --config ~/.config/rclone/rclone.conf listremotes | tr -d '\r')"
+
+          if [[ -z "$REMOTES" ]]; then
+            echo "No rclone remotes found. Your RCLONE_CONFIG secret is not a valid rclone.conf (INI) file."
+            exit 1
+          fi
+
+          REMOTE="$(echo "$REMOTES" | head -n 1 | sed 's/:$//')"
+
+          # Validate remote name before using it (prevents leaking config/token in logs)
+          if [[ ! "$REMOTE" =~ ^[0-9A-Za-z_.\ -]+$ ]]; then
+            echo "Invalid remote name parsed. Fix your RCLONE_CONFIG formatting."
+            exit 1
+          fi
+
+          echo "RCLONE_REMOTE=$REMOTE" >> "$GITHUB_ENV"
+
+          # Now safe to use
+          rclone --config ~/.config/rclone/rclone.conf about "${REMOTE}:"
 
 
 
@@ -72,7 +91,6 @@ jobs:
           GEMINI_MODEL: gemini-2.5-flash
           NOTION_TOKEN: ${{ secrets.NOTION_TOKEN }}
           NOTION_DB_ID: ${{ secrets.NOTION_DB_ID }}
-          RCLONE_REMOTE: ${{ secrets.RCLONE_REMOTE }}
           DRIVE_ROOT: ${{ secrets.DRIVE_ROOT }}         # JobApps
           LIMIT: ${{ github.event.inputs.limit }}
           MODEL_NAME: "none"
