@@ -384,7 +384,21 @@ def compile_pdf(tex_path: pathlib.Path) -> pathlib.Path:
     except subprocess.CalledProcessError as e:
         combined = ((e.stdout or "") + "\n" + (e.stderr or "")).strip()
         tail = combined[-1800:] if len(combined) > 1800 else combined
-        raise RuntimeError("tectonic_failed:\n" + tail) from e
+        context = ""
+        match = re.search(rf"{re.escape(tex_path.name)}:(\d+)", combined)
+        if match and tex_path.exists():
+            try:
+                line_no = int(match.group(1))
+                lines = tex_path.read_text(encoding="utf-8").splitlines()
+                start = max(line_no - 3, 0)
+                end = min(line_no + 2, len(lines))
+                snippet = []
+                for i in range(start, end):
+                    snippet.append(f"{i + 1}: {lines[i]}")
+                context = "\n\nContext:\n" + "\n".join(snippet)
+            except Exception:
+                context = ""
+        raise RuntimeError("tectonic_failed:\n" + tail + context) from e
 
     pdf_path = out_dir / tex_path.with_suffix(".pdf").name
     if not pdf_path.exists():
