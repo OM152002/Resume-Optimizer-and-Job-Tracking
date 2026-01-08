@@ -6,7 +6,7 @@ on:
 
 permissions:
   contents: read
-  issues: read
+  actions: write
 
 jobs:
   intake:
@@ -33,3 +33,9 @@ jobs:
           NOTION_DB_ID: ${{ secrets.NOTION_DB_ID }}
         run: |
           python -m src.intake_issue
+      - name: Trigger Apply Log
+        if: success()
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          gh workflow run "Apply Log" -f limit=1

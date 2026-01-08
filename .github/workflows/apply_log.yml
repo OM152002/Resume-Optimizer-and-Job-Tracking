@@ -7,9 +7,10 @@ on:
         description: "Max number of Not Applied rows to process"
         required: true
         default: "1"
-  workflow_run:
-    workflows: ["Intake job to Notion"]
-    types: [completed]
+
+concurrency:
+  group: apply-log
+  cancel-in-progress: true
 
 jobs:
   run:
