@@ -259,6 +259,8 @@ def escape_tex_specials(latex: str) -> str:
         "$": r"\$",
         "#": r"\#",
         "_": r"\_",
+        "^": r"\textasciicircum{}",
+        "~": r"\textasciitilde{}",
     }
     out = latex
     for ch, rep in replacements.items():
@@ -380,7 +382,10 @@ def compile_pdf(tex_path: pathlib.Path) -> pathlib.Path:
         combined = ((e.stdout or "") + "\n" + (e.stderr or "")).strip()
         tail = combined[-1800:] if len(combined) > 1800 else combined
         context = ""
-        match = re.search(rf"{re.escape(tex_path.name)}:(\d+)", combined)
+        # Prefer "error:" lines for context, falling back to any file:line match
+        match = re.search(rf"error: {re.escape(tex_path.name)}:(\d+)", combined)
+        if not match:
+            match = re.search(rf"{re.escape(tex_path.name)}:(\d+)", combined)
         if match and tex_path.exists():
             try:
                 line_no = int(match.group(1))
