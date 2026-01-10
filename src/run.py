@@ -22,145 +22,142 @@ ART_DIR = pathlib.Path("artifacts")
 ART_DIR.mkdir(exist_ok=True)
 
 MASTER_LATEX = r"""
-\documentclass[10.5pt]{article}
-\usepackage[margin=0.4in, bottom=0.4in, top=0.5in]{geometry}
-\usepackage{hyperref}
+\documentclass[10pt]{extarticle}
+\usepackage[left=0.4in,right=0.4in,top=0.4in,bottom=0.4in]{geometry}
+\usepackage[hidelinks]{hyperref}
 \usepackage{enumitem}
 \usepackage{titlesec}
 \usepackage{parskip}
-\usepackage{comment}
+\usepackage{xcolor}
+\definecolor{mygreen}{HTML}{169137}
+\definecolor{myblue}{HTML}{1848cc}
 
 \pagenumbering{gobble}
-
 \titleformat{\section}{\large\bfseries}{}{0em}{}
 \titleformat{\subsection}{\bfseries}{}{0em}{}
-
 \setlength{\parindent}{0pt}
 
-\title{\vspace{-1.6cm}\textbf {Poojan Vanani}}
+\title{\color{myblue}{\vspace{-1.5cm} \LARGE \textbf{OM KIRANBHAI PATEL}}}
 \date{}
 
 \begin{document}
 
 \maketitle
-
 \vspace{-2cm}
-
 \hrule
 \begin{center}
-\small
-    +1 (224)400-2468 
-    \quad \href{mailto:poojan.vanani1900@gmail.com}{poojan.vanani1900@gmail.com}  
-    \quad \href{https://www.linkedin.com/in/poojan-vanani}{www.linkedin.com/in/poojan-vanani} 
-    \quad \href{https://poojanvanani.tech}{https://poojanvanani.tech}
++1 (480) 876-1813 \quad \href{mailto:ompatel0584@gmail.com}{ompatel0584@gmail.com} \quad \href{https://www.linkedin.com/in/om-patel-1512om/}{www.linkedin.com/in/om-patel-1512om} \quad \href{https://www.ompatel.info}{www.ompatel.info}
 \end{center}
 
-\vspace{-10pt}
-\section*{SUMMARY}
-\vspace{-5pt}
 \hrule
-Mechanical Design \& Robotics Engineer with 3.5+ years of experience delivering precision electromechanical systems for automation, biofabrication, and research. Skilled in CAD, GD\&T, high-volume manufacturing, and cross-functional product launches with proven cost, quality, and time-to-market improvements.
-
-\vspace{-10pt}
-\section*{EDUCATION}
-\vspace{-5pt}
-\hrule
-
-\textbf{M.S. in Robotics and Autonomous Systems (Mechanical And Aerospace Engineering) } \hfill 8/2023 - 5/2025 \\
-Arizona State University, Tempe, AZ \hfill GPA: 3.47/4.00
-
-\vspace{-4pt}
-
-\textbf{Bachelor of Technology in Mechatronics Engineering} \hfill 7/2018 - 5/2022 \\
-Ganpat University, Mehsana, Gujarat, India \hfill GPA: 8.07/10 
-
-\vspace{-10pt}
-\section*{TECHNICAL SKILLS}
-\vspace{-5pt}
-\hrule
-
+\vspace{-1pt}
+\textbf{B.S./M.S. (4+1) in Computer Science} \hfill Expected Dec 2026 \\
+Arizona State University, Tempe, AZ \hfill GPA: 3.98 \\
+\vspace{-18pt}
 \begin{itemize}[left=5pt,itemsep=-4pt]
-\item \textbf{Mechanical Design:} SolidWorks (CSWA), Onshape, CATIA (familiar), AutoCAD, 3D modeling, GD\&T, FEA, DFM/DFA, Tolerance Stack-up, Injection Molding, Die Casting, Material Selection
-\item \textbf{Prototyping \& Manufacturing:} FDM 3D Printing, Rapid Prototyping, CNC, Machining, Additive Manufacturing, Assembly Documentation
-\item \textbf{Electronics Integration:} PCB Design (Eagle), Arduino, ESP32, STM32F4, Circuit Design, Sensors, I2C, SPI
-\item \textbf{Programming:} C, C++, Python, MATLAB
-\item \textbf{Testing \& Debugging:} Oscilloscope, Multimeter, FAT, System Integration
-\item \textbf{Software:} SolidWorks Simulation, RSLogix, Visual Studio Code, Git, Google Suite, Microsoft Office
-\item \textbf{Certifications:} Certified SolidWorks Associate, Bosch Rexroth (PLC, Sensors, Hydraulics)
+\item \textbf{Relevant Coursework:} Machine Learning, AI, Cloud Computing, Data Structures \& Algorithms, Distributed Systems, Operating Systems, Web Development, Data Mining
 \end{itemize}
 
 \vspace{-10pt}
-\section*{PROFESSIONAL EXPERIENCE}
-\vspace{-5pt}
+\section*{\color{mygreen}{SKILLS}}
 \hrule
-
-\textbf{Research Assistant, Arizona State University, Tempe, AZ} \hfill 11/2023 - 5/2025
-\vspace{-4pt}
 \begin{itemize}[left=5pt,itemsep=-4pt]
-\item Engineered 20+ precision parts in SolidWorks with in-house 3D printing, refining tolerances and materials to cut fit issues by 80\%.
-\item Performed FEA to verify stiffness and strength, ensuring zero failures in high-load motion capture pods.
-\item Built a laser-cut acrylic transport case using CAD and shop tools, cutting transport damage by 70\% and improving portability.
-\item Produced 3D-print-ready models and managed in-house fabrication, reducing print-to-assembly time by 30\%.
+\vspace{-1pt}
+\item \textbf{Languages:} Python, C, C\texttt{++}, Java, JavaScript, TypeScript, SQL
+\item \textbf{AI/ML:} PyTorch, TensorFlow, Scikit-Learn, model evaluation, data preprocessing
+\item \textbf{Backend:} Node.js, REST APIs, Flask, Django, Firebase
+\item \textbf{Frontend:} React.js, Next.js, React Native, HTML/CSS
+\item \textbf{Cloud/DevOps:} AWS, Kubernetes, Linux, Docker, Git, GitLab CI/CD
 \end{itemize}
 
-\textbf{Junior Engineer R\&D, Next Big Innovation Labs Pvt. Ltd., Bengaluru, Karnataka, India} \hfill 7/2022 - 8/2023 
-\vspace{-4pt}
-\begin{itemize}[left=5pt,itemsep=-4pt]
-\item Created coaxial/triaxial needle kits using GD\&T, delivering a 76\% cost reduction while maintaining precision and durability.
-\item Fabricated a custom pellet-based extruder in India, lowering manufacturing cost by 66.8\% and enabling multi-material bioprinting.
-\item Enhanced extruder heads through iterative prototyping and testing, raising operational efficiency by 15\%.
-\item Partnered with electronics vendors to deliver tailored integration solutions, ensuring compatibility and long-term reliability.
-\end{itemize}
-
-\textbf{Intern, Nutron System Pvt. Ltd., Kalol, Gujarat, India} \hfill 4/2021 - 10/2021
-\vspace{-4pt}
-\begin{itemize}[left=5pt,itemsep=-4pt]
-\item Automated PTFE Bellow assembly line with CAD and PLC, boosting efficiency by 40\% and reducing defects by 82\%.
-\item Designed a glue dispenser and mesh cutter for Godrej \& Viega, improving automation and reducing manual work.
-\item Collaborated with manufacturing teams to install automation systems, increasing uptime and reliability.
-\end{itemize}
-
-\vspace{-10pt}    
-\section*{PROJECTS}
-\vspace{-5pt}
+\vspace{-10pt}
+\section*{\color{mygreen}{EXPERIENCE}}
 \hrule
-
-\textbf{All-Terrain Vehicle (Team)} \hfill May 2019 -- Feb 2020
+\vspace{-1pt}
+\textbf{TheBeautyRunners}, Tempe, AZ \hfill Jan 2025 -- Dec 2025 \\
+\textit{Software Engineer}
 \vspace{-4pt}
 \begin{itemize}[left=5pt,itemsep=-4pt]
-\item Designed suspension and steering systems in SolidWorks/Lotus to optimize durability and handling, securing 6th place nationally out of 80+ teams.
-\item Developed custom sheet-metal and composite bodywork, improving aesthetics, ergonomics, and performance under competitive conditions.
+\item Built and maintained a scalable \textbf{React Native} application with validated APIs, authentication, and async workflows for production use.
+\item Implemented \textbf{serverless backend operations} using \textbf{Firebase} for authentication, data storage, and cloud functions; integrated \textbf{Stripe} for secure payment processing.
+\item Deployed the mobile application to \textbf{Apple TestFlight} for beta testing, managing builds, versioning, and user feedbacks.
 \end{itemize}
 
-\textbf{Underwater ROV (Team)} \hfill Dec 2021 -- May 2022
-\vspace{-4pt}
+\textbf{Arizona State University}, Tempe, AZ \hfill Nov 2022 -- Dec 2025 \\
+\textit{IT Support \& Content Manager}
 \begin{itemize}[left=5pt,itemsep=-4pt]
-\item Built a deep-sea ROV integrating BLDC motors, waterproof enclosures, RF communication, and microcontrollers, enabling real-time video and sample collection at depth.
-\item Validated structural integrity and thermal stability under simulated deep-water conditions, ensuring reliable long-duration operation.
+\vspace{-4pt}
+\item Managed and maintained operational data in \textbf{Salesforce}, supporting data accuracy, reporting, and business workflows.
+\item Built automation and data-processing tools in \textbf{Python} to analyze records, track trends, and reduce manual effort.
+\item Authored technical documentation and process guides used by cross-functional teams across the university.
 \end{itemize}
 
-\textbf{Nurse Robot (Team)} \hfill Mar 2020 -- Jun 2020
-\vspace{-4pt}
+\textbf{Three Martian IT Solutions}, Surat, India \hfill May 2022 -- Jul 2022 \\
+\textit{Python Developer}
 \begin{itemize}[left=5pt,itemsep=-4pt]
-\item Designed assistive robot hardware for contactless patient care; selected and integrated sensors and PCBA layouts within compact housing.
-\item Contributed to rapid prototyping and testing for functional validation during COVID-19 response.
+\vspace{-4pt}
+\item Enhanced \textbf{Django} modules, improving system maintainability and API performance through optimized SQL and caching.
+\item Implemented automated unit tests, improved backend reliability, and deployed containerized builds via Docker.
+\item Documented API behavior, module dependencies, and code changes for long-term maintainability.
 \end{itemize}
 
-\textbf{SACH Cotton Harvester (Solo)} \hfill Jul 2021 -- May 2022
+\vspace{-10pt}
+\section*{\color{mygreen}{PROJECTS}}
+\hrule
+\vspace{-1pt}
+\textbf{Preview Environment Manager}
 \vspace{-4pt}
 \begin{itemize}[left=5pt,itemsep=-4pt]
-\item Developed a semi-automatic cotton harvester with robotic manipulator and IoT-based collection, improving small-scale farm productivity by 40\% in field trials.
-\item Designed mechanical linkages and modular attachments for easy adaptation to varied farm layouts and crop conditions.
+\item Engineered an automated \textbf{Kubernetes} preview system using \textbf{Node.js, Express, and GitHub webhooks} that dynamically provisions isolated namespaces per pull request, accelerating code review by \textbf{enabling instant deployment validation}.
+\item Orchestrated \textbf{CI/CD automation with Docker, kubectl, and kind}, implementing secure webhook verification, resource-constrained deployments with health probes, and lifecycle management achieving \textbf{zero-touch infrastructure operations}.
 \end{itemize}
 
-\textbf{FDM 3D Printer (Solo)} \hfill Nov 2021 -- Dec 2022
+
+\textbf{Serverless \& Edge-Based Face Recognition Pipeline}
 \vspace{-4pt}
 \begin{itemize}[left=5pt,itemsep=-4pt]
-\item Designed and assembled a 400x400x400 mm FDM printer with optimized frame rigidity, linear motion system, and custom PCB integration, achieving consistent print quality.
-\item Tuned firmware parameters and thermal management systems to ensure repeatable precision across multi-hour print cycles.
+\item Architected a distributed \textbf{cloud + edge AI system} using \textbf{AWS Lambda, SQS, ECR, and IoT Greengrass} with \textbf{MTCNN + FaceNet models} for real-time facial recognition, achieving \textbf{100\% accuracy} under production workloads.
+\item Optimized inference by offloading detection to \textbf{edge devices via MQTT}, containerizing PyTorch with CPU-optimized Docker builds, and implementing async message queuing that reduced latency by \textbf{40\%} across distributed environments.
+\end{itemize}
+
+
+\textbf{GetCoverly.ai}
+\vspace{-4pt}
+\begin{itemize}[left=5pt,itemsep=-4pt]
+\item Developing an AI-powered resume and cover-letter generator using \textbf{React, Node.js, and Firebase} integrated with OpenAI, allowing users to craft tailored documents \textbf{3× faster}.
+\item Applied \textbf{machine learning for job-skill mapping} to raise personalization accuracy and automate NLP-driven generation.
+\end{itemize}
+
+\textbf{GPU-Accelerated Binary Classifier}
+\vspace{-4pt}
+\begin{itemize}[left=5pt,itemsep=-4pt]
+\item Designed a GPU-optimized binary classifier in Python using \textbf{NumPy/cuML}, enabling \textbf{3× faster} training on large datasets.
+\item Evaluated model performance, tuned parameters, and analyzed class-imbalance effects to improve accuracy and reliability.
+\end{itemize}
+
+\textbf{AI-Enabled Mevent Console}
+\vspace{-4pt}
+\begin{itemize}[left=5pt,itemsep=-4pt]
+\item Built real-time dashboards with \textbf{Next.js} and WebSockets for event monitoring and pattern detection.
+\item Implemented accessibility, automated tests, and structured documentation to support long-term extensibility.
+\end{itemize}
+
+\textbf{Custom C\texttt{++} Compiler and Interpreter}
+\vspace{-4pt}
+\begin{itemize}[left=5pt,itemsep=-4pt]
+\item Implemented compiler components (lexer, parser, IR interpreter) using core algorithmic techniques and memory-safe C\texttt{++}.
+\item Added structured error reporting, test harnesses, and Linux scripts to ensure deterministic behavior and robust debugging.
+\end{itemize}
+
+\textbf{ConvertEase Discord Bot}
+\begin{itemize}[left=5pt,itemsep=-4pt]
+\vspace{-4pt}
+\item Automated file processing and conversions using \textbf{Python}, including error-tolerant command parsing.
+\item Reduced conversion times by 50\% through optimized algorithms and caching techniques.
 \end{itemize}
 
 \end{document}
+
 """.strip()
 
 
@@ -578,7 +575,7 @@ def main():
             out_dir = ART_DIR / f"{clean_path_segment(company)}_{clean_path_segment(role)}"
             out_dir.mkdir(parents=True, exist_ok=True)
 
-            tex_path = out_dir / "Poojan_Vanani_Resume.tex"
+            tex_path = out_dir / "Om_Patel_Resume.tex"
             tex_path.write_text(tailored_latex, encoding="utf-8")
 
             pdf_path = compile_pdf(tex_path)

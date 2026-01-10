@@ -67,7 +67,7 @@ Professional Voice & Impact:
 
 Balance:
 - Do not keyword-stuff. Must read smoothly.
-- Keep concise (1 page if under 8 yrs).
+- Keep concise (1 page).
 
 Final Output:
 - Deliver a complete revised resume.
