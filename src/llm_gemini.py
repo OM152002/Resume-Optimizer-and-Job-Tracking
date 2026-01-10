@@ -48,7 +48,7 @@ Instructions
 
 Keyword Optimization:
 - Carefully analyze the job description and extract the most important hard skills, technical terms, tools, certifications, and role-specific keywords.
-- Naturally integrate these keywords throughout my resume especially in experience bullet points, summary, and skills section — while maintaining readability and authenticity.
+- Naturally integrate these keywords throughout my resume especially in experience bullet points and skills section — while maintaining readability and authenticity.
 
 Role Alignment:
 - Identify responsibilities and achievements from my current resume that most closely match the target role.
@@ -71,7 +71,7 @@ Balance:
 
 Final Output:
 - Deliver a complete revised resume.
-- Include a summary tailored to the JD.
+
 - End with a skills section listing core competencies aligned with the JD.
 
 Deliverable:
@@ -86,13 +86,14 @@ NON-NEGOTIABLE RULES (MUST FOLLOW):
 6) DO NOT add new companies, roles, degrees, or projects that are not in the master resume.
 7) You MAY rewrite bullet text for relevance, but preserve the number of bullets per entry (same count as master).
 8) You MAY reorder bullets within the same entry. Do not move bullets across entries.
-9) Keep the overall structure identical: only modify bullet text content and (optionally) summary lines.
+9) Keep the overall structure identical: only modify bullet text content.
 10) Avoid special characters unless escaped for LaTeX: &, %, $, #, _ must be escaped.
+11) DO NOT add a SUMMARY section. The master resume does not have one.
 
 EDITING SCOPE:
 - Allowed edits:
   - Rewrite bullet text to better match the job description.
-  - Adjust wording in SUMMARY to align with the job.
+
 - Forbidden edits:
   - Any structural changes, removing environments, changing \section* names, adding custom commands/macros.
 
