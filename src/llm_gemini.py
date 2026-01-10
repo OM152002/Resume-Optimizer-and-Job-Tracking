@@ -80,7 +80,7 @@ Output the final revised resume ready to be copied back into LaTeX code.
 NON-NEGOTIABLE RULES (MUST FOLLOW):
 1) Output MUST be valid LaTeX that compiles with tectonic.
 2) DO NOT change the LaTeX preamble (everything before \begin{document}).
-3) DO NOT remove or rename any section headers (SUMMARY, EDUCATION, TECHNICAL SKILLS, PROFESSIONAL EXPERIENCE, PROJECTS).
+3) DO NOT remove or rename any section headers (SKILLS, EXPERIENCE, PROJECTS).
 4) DO NOT delete any job/role/project entry. Keep all entries.
 5) DO NOT change dates, company names, titles, locations, degrees, GPAs, or contact info.
 6) DO NOT add new companies, roles, degrees, or projects that are not in the master resume.

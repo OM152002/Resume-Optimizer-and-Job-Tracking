@@ -334,10 +334,9 @@ def count_itemize_items(latex: str) -> int:
 
 def require_same_section_markers(master: str, tailored: str) -> None:
     required = [
-        r"\section*{EDUCATION}",
-        r"\section*{TECHNICAL SKILLS}",
-        r"\section*{PROFESSIONAL EXPERIENCE}",
-        r"\section*{PROJECTS}",
+        r"\section*{\color{mygreen}{SKILLS}}",
+        r"\section*{\color{mygreen}{EXPERIENCE}}",
+        r"\section*{\color{mygreen}{PROJECTS}}",
     ]
     for m in required:
         if m not in tailored:
