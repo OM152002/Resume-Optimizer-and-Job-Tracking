@@ -49,6 +49,9 @@ MASTER_LATEX = r"""
 +1 (480) 876-1813 \quad \href{mailto:ompatel0584@gmail.com}{ompatel0584@gmail.com} \quad \href{https://www.linkedin.com/in/om-patel-1512om/}{www.linkedin.com/in/om-patel-1512om} \quad \href{https://www.ompatel.info}{www.ompatel.info}
 \end{center}
 
+
+\vspace{-10pt}
+\section*{\color{mygreen}{EDUCATION}}
 \hrule
 \vspace{-1pt}
 \textbf{B.S./M.S. (4+1) in Computer Science} \hfill Expected Dec 2026 \\
@@ -338,6 +341,7 @@ def count_itemize_items(latex: str) -> int:
 
 def require_same_section_markers(master: str, tailored: str) -> None:
     required = [
+        r"\section*{\color{mygreen}{EDUCATION}}",
         r"\section*{\color{mygreen}{SKILLS}}",
         r"\section*{\color{mygreen}{EXPERIENCE}}",
         r"\section*{\color{mygreen}{PROJECTS}}",
