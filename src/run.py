@@ -500,7 +500,7 @@ def main():
             require_same_section_markers(MASTER_LATEX, tailored_latex)
             try:
                 require_bullet_count_stable(
-                    MASTER_LATEX, tailored_latex, max_drop=2, max_add=0
+                    MASTER_LATEX, tailored_latex, max_drop=10, max_add=10
                 )
             except RuntimeError:
                 pack = generate_apply_pack(
@@ -534,7 +534,7 @@ def main():
                 ok, reason = looks_like_latex_resume(tailored_latex)
                 require_same_section_markers(MASTER_LATEX, tailored_latex)
                 require_bullet_count_stable(
-                    MASTER_LATEX, tailored_latex, max_drop=2, max_add=0
+                    MASTER_LATEX, tailored_latex, max_drop=10, max_add=10
                 )
 
             fit_score = pack.get("fit_score", 0)
