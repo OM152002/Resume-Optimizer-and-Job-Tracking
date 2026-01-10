@@ -274,6 +274,8 @@ def sanitize_latex(tex: str) -> str:
         return ""
     tex = tex.replace("\ufeff", "").replace("\x00", "")
     tex = tex.strip()
+    # Replace common math commands that break text mode
+    tex = tex.replace(r"\times", "x").replace(r"\pm", "+/-")
 
     # remove markdown code fences if present
     tex = re.sub(r"^\s*```[a-zA-Z0-9_-]*\s*\n", "", tex)
