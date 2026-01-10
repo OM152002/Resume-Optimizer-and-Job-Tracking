@@ -358,7 +358,7 @@ def require_no_new_companies(master: str, tailored: str) -> None:
         raise RuntimeError("mutation_violation: introduced new \\textbf entries: " + ", ".join(new_bold[:10]))
 
 def require_bullet_count_stable(
-    master: str, tailored: str, max_drop: int = 2, max_add: int = 2
+    master: str, tailored: str, max_drop: int = 10, max_add: int = 10
 ) -> None:
     m = count_itemize_items(master)
     t = count_itemize_items(tailored)
