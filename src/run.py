@@ -334,7 +334,6 @@ def count_itemize_items(latex: str) -> int:
 
 def require_same_section_markers(master: str, tailored: str) -> None:
     required = [
-        r"\section*{SUMMARY}",
         r"\section*{EDUCATION}",
         r"\section*{TECHNICAL SKILLS}",
         r"\section*{PROFESSIONAL EXPERIENCE}",
