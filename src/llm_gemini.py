@@ -119,9 +119,8 @@ EDITING SCOPE:
   - Changing \datedexperience or \explanation arguments.
 
 OUTPUT REQUIREMENT:
-Return ONLY the full LaTeX document as a single string.
+Ensure the content in the 'tailored_latex' JSON field is the full LaTeX document.
 The LaTeX must start with \documentclass{om_patel} and end with \end{document}.
-Do not add any leading or trailing text outside the LaTeX.
 
 """.strip()
 
