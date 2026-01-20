@@ -138,6 +138,18 @@ def sanitize_latex(tex: str) -> str:
     # Replace common math commands that break text mode
     tex = tex.replace(r"\times", "x").replace(r"\pm", "+/-")
 
+    # Fix double-escaped newlines (literal \n -> actual newline)
+    if "\\n" in tex:
+        tex = tex.replace("\\n", "\n")
+
+    # Fix double-escaped commands (e.g. \\documentclass -> \documentclass)
+    # Replace \\ followed by a letter with \ followed by that letter
+    # This preserves \\ (line break) which is usually followed by space or optional arg [
+    tex = re.sub(r"\\\\([a-zA-Z@])", r"\\\1", tex)
+    
+    # Fix common escaped characters that might have been double-escaped
+    tex = tex.replace(r"\\%", r"\%").replace(r"\\&", r"\&").replace(r"\\$", r"\$").replace(r"\\#", r"\#").replace(r"\\_", r"\_")
+
     # remove markdown code fences if present
     tex = re.sub(r"^\s*```[a-zA-Z0-9_-]*\s*\n", "", tex)
     tex = re.sub(r"\n\s*```\s*$", "", tex)
