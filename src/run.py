@@ -136,16 +136,14 @@ def sanitize_latex(tex: str) -> str:
     tex = tex.replace("\ufeff", "").replace("\x00", "")
     tex = tex.strip()
     # Replace common math commands that break text mode
-    tex = tex.replace(r"\times", "x").replace(r"\pm", "+/-")
-
-    # Fix double-escaped newlines (literal \n -> actual newline)
-    if "\\n" in tex:
-        tex = tex.replace("\\n", "\n")
-
-    # Fix double-escaped commands (e.g. \\documentclass -> \documentclass)
-    # Replace \\ followed by a letter with \ followed by that letter
-    # This preserves \\ (line break) which is usually followed by space or optional arg [
-    tex = re.sub(r"\\\\([a-zA-Z@])", r"\\\1", tex)
+    # Fix double-escaped newlines and commands
+    # We use a regex to handle \\ -> \ and \n -> newline safely.
+    # We protect \n if it is followed by a letter (likely a command like \newcommand).
+    def unescape(m):
+        if m.group(1): return "\\"  # Matches \\
+        return "\n"                 # Matches \n not followed by letter
+    
+    tex = re.sub(r"(\\\\)|(\\n(?![a-zA-Z]))", unescape, tex)
     
     # Fix common escaped characters that might have been double-escaped
     tex = tex.replace(r"\\%", r"\%").replace(r"\\&", r"\&").replace(r"\\$", r"\$").replace(r"\\#", r"\#").replace(r"\\_", r"\_")
