@@ -29,7 +29,7 @@
 \newcommand*{\setcitizenship}[1]{\def\@citizenship{#1}}
 \newcommand*{\setthemecolor}[1]{\def\@themecolor{#1}}
 \newcommand*{\setlinkedinaccount}[1]{\def\@linkedinaccount{#1}}
-%\newcommand*{\setgithubaccount}[1]{\def\@githubaccount{#1}}
+\newcommand*{\setgithubaccount}[1]{\def\@githubaccount{#1}}
 \newcommand*{\setportfolio}[1]{\def\@portfolio{#1}}
 
 \hypersetup{
@@ -59,7 +59,7 @@
         % {\small \@address  \cps \@citizenship \\ \@mobile \cps \@mail% %%OLD
         {\small \@mail \ \cpshalf \@mobile %
         \\%
-        \githubview \cpshalf \portfolioview \\ 
+        \portfolioview \\ 
         } % 
 }
 
