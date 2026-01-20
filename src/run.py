@@ -234,16 +234,22 @@ def require_bullet_count_stable(
 def compile_pdf(tex_path: pathlib.Path) -> pathlib.Path:
     out_dir = tex_path.parent
     try:
-        # Copy .cls file to out_dir if it exists in templates
+        # Copy and patch .cls file to out_dir if it exists in templates
         cls_src = pathlib.Path(__file__).parent / "templates" / "om_patel.cls"
         if cls_src.exists():
-            import shutil
-            shutil.copy(cls_src, out_dir / "om_patel.cls")
-            print(f"Copied {cls_src} to {out_dir / 'om_patel.cls'}")
+            cls_content = cls_src.read_text(encoding="utf-8")
+            # Patch the class name to match the filename
+            cls_content = cls_content.replace(r"\ProvidesClass{muratcan_cv}", r"\ProvidesClass{om_patel}")
+            
+            cls_dest = out_dir / "om_patel.cls"
+            cls_dest.write_text(cls_content, encoding="utf-8")
+            print(f"Copied and patched {cls_src} to {cls_dest}")
         else:
             print(f"WARNING: Class file not found at {cls_src}")
 
-        print(f"Files in {out_dir}: {list(out_dir.glob('*'))}")
+        # Debug: List files in out_dir to confirm existence
+        print(f"Files in {out_dir}:")
+        subprocess.run(["ls", "-la", str(out_dir)], check=False)
 
         subprocess.run(
             ["tectonic", tex_path.name, "--outdir", "."],
