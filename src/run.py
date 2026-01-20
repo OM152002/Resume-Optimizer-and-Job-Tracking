@@ -21,148 +21,6 @@ from .notion_client import (
 ART_DIR = pathlib.Path("artifacts")
 ART_DIR.mkdir(exist_ok=True)
 
-MASTER_LATEX = r"""
-\documentclass[10pt]{extarticle}
-\usepackage[left=0.4in,right=0.4in,top=0.4in,bottom=0.4in]{geometry}
-\usepackage[hidelinks]{hyperref}
-\usepackage{enumitem}
-\usepackage{titlesec}
-\usepackage{parskip}
-\usepackage{xcolor}
-\definecolor{mygreen}{HTML}{169137}
-\definecolor{myblue}{HTML}{1848cc}
-
-\pagenumbering{gobble}
-\titleformat{\section}{\large\bfseries}{}{0em}{}
-\titleformat{\subsection}{\bfseries}{}{0em}{}
-\setlength{\parindent}{0pt}
-
-\title{\color{myblue}{\vspace{-1.5cm} \LARGE \textbf{OM KIRANBHAI PATEL}}}
-\date{}
-
-\begin{document}
-
-\maketitle
-\vspace{-2cm}
-\hrule
-\begin{center}
-+1 (480) 876-1813 \quad \href{mailto:ompatel0584@gmail.com}{ompatel0584@gmail.com} \quad \href{https://www.linkedin.com/in/om-patel-1512om/}{www.linkedin.com/in/om-patel-1512om} \quad \href{https://www.ompatel.info}{www.ompatel.info}
-\end{center}
-
-
-\vspace{-10pt}
-\section*{\color{mygreen}{EDUCATION}}
-\hrule
-\vspace{-1pt}
-\textbf{B.S./M.S. (4+1) in Computer Science} \hfill Expected Dec 2026 \\
-Arizona State University, Tempe, AZ \hfill GPA: 3.98 \\
-\vspace{-18pt}
-\begin{itemize}[left=5pt,itemsep=-4pt]
-\item \textbf{Relevant Coursework:} Machine Learning, AI, Cloud Computing, Data Structures \& Algorithms, Distributed Systems, Operating Systems, Web Development, Data Mining
-\end{itemize}
-
-\vspace{-10pt}
-\section*{\color{mygreen}{SKILLS}}
-\hrule
-\begin{itemize}[left=5pt,itemsep=-4pt]
-\vspace{-1pt}
-\item \textbf{Languages:} Python, C, C\texttt{++}, Java, JavaScript, TypeScript, SQL
-\item \textbf{AI/ML:} PyTorch, TensorFlow, Scikit-Learn, model evaluation, data preprocessing
-\item \textbf{Backend:} Node.js, REST APIs, Flask, Django, Firebase
-\item \textbf{Frontend:} React.js, Next.js, React Native, HTML/CSS
-\item \textbf{Cloud/DevOps:} AWS, Kubernetes, Linux, Docker, Git, GitLab CI/CD
-\end{itemize}
-
-\vspace{-10pt}
-\section*{\color{mygreen}{EXPERIENCE}}
-\hrule
-\vspace{-1pt}
-\textbf{TheBeautyRunners}, Tempe, AZ \hfill Jan 2025 -- Dec 2025 \\
-\textit{Software Engineer}
-\vspace{-4pt}
-\begin{itemize}[left=5pt,itemsep=-4pt]
-\item Built and maintained a scalable \textbf{React Native} application with validated APIs, authentication, and async workflows for production use.
-\item Implemented \textbf{serverless backend operations} using \textbf{Firebase} for authentication, data storage, and cloud functions; integrated \textbf{Stripe} for secure payment processing.
-\item Deployed the mobile application to \textbf{Apple TestFlight} for beta testing, managing builds, versioning, and user feedbacks.
-\end{itemize}
-
-\textbf{Arizona State University}, Tempe, AZ \hfill Nov 2022 -- Dec 2025 \\
-\textit{IT Support \& Content Manager}
-\begin{itemize}[left=5pt,itemsep=-4pt]
-\vspace{-4pt}
-\item Managed and maintained operational data in \textbf{Salesforce}, supporting data accuracy, reporting, and business workflows.
-\item Built automation and data-processing tools in \textbf{Python} to analyze records, track trends, and reduce manual effort.
-\item Authored technical documentation and process guides used by cross-functional teams across the university.
-\end{itemize}
-
-\textbf{Three Martian IT Solutions}, Surat, India \hfill May 2022 -- Jul 2022 \\
-\textit{Python Developer}
-\begin{itemize}[left=5pt,itemsep=-4pt]
-\vspace{-4pt}
-\item Enhanced \textbf{Django} modules, improving system maintainability and API performance through optimized SQL and caching.
-\item Implemented automated unit tests, improved backend reliability, and deployed containerized builds via Docker.
-\item Documented API behavior, module dependencies, and code changes for long-term maintainability.
-\end{itemize}
-
-\vspace{-10pt}
-\section*{\color{mygreen}{PROJECTS}}
-\hrule
-\vspace{-1pt}
-\textbf{Preview Environment Manager}
-\vspace{-4pt}
-\begin{itemize}[left=5pt,itemsep=-4pt]
-\item Engineered an automated \textbf{Kubernetes} preview system using \textbf{Node.js, Express, and GitHub webhooks} that dynamically provisions isolated namespaces per pull request, accelerating code review by \textbf{enabling instant deployment validation}.
-\item Orchestrated \textbf{CI/CD automation with Docker, kubectl, and kind}, implementing secure webhook verification, resource-constrained deployments with health probes, and lifecycle management achieving \textbf{zero-touch infrastructure operations}.
-\end{itemize}
-
-
-\textbf{Serverless \& Edge-Based Face Recognition Pipeline}
-\vspace{-4pt}
-\begin{itemize}[left=5pt,itemsep=-4pt]
-\item Architected a distributed \textbf{cloud + edge AI system} using \textbf{AWS Lambda, SQS, ECR, and IoT Greengrass} with \textbf{MTCNN + FaceNet models} for real-time facial recognition, achieving \textbf{100\% accuracy} under production workloads.
-\item Optimized inference by offloading detection to \textbf{edge devices via MQTT}, containerizing PyTorch with CPU-optimized Docker builds, and implementing async message queuing that reduced latency by \textbf{40\%} across distributed environments.
-\end{itemize}
-
-
-\textbf{GetCoverly.ai}
-\vspace{-4pt}
-\begin{itemize}[left=5pt,itemsep=-4pt]
-\item Developing an AI-powered resume and cover-letter generator using \textbf{React, Node.js, and Firebase} integrated with OpenAI, allowing users to craft tailored documents \textbf{3× faster}.
-\item Applied \textbf{machine learning for job-skill mapping} to raise personalization accuracy and automate NLP-driven generation.
-\end{itemize}
-
-\textbf{GPU-Accelerated Binary Classifier}
-\vspace{-4pt}
-\begin{itemize}[left=5pt,itemsep=-4pt]
-\item Designed a GPU-optimized binary classifier in Python using \textbf{NumPy/cuML}, enabling \textbf{3× faster} training on large datasets.
-\item Evaluated model performance, tuned parameters, and analyzed class-imbalance effects to improve accuracy and reliability.
-\end{itemize}
-
-\textbf{AI-Enabled Mevent Console}
-\vspace{-4pt}
-\begin{itemize}[left=5pt,itemsep=-4pt]
-\item Built real-time dashboards with \textbf{Next.js} and WebSockets for event monitoring and pattern detection.
-\item Implemented accessibility, automated tests, and structured documentation to support long-term extensibility.
-\end{itemize}
-
-\textbf{Custom C\texttt{++} Compiler and Interpreter}
-\vspace{-4pt}
-\begin{itemize}[left=5pt,itemsep=-4pt]
-\item Implemented compiler components (lexer, parser, IR interpreter) using core algorithmic techniques and memory-safe C\texttt{++}.
-\item Added structured error reporting, test harnesses, and Linux scripts to ensure deterministic behavior and robust debugging.
-\end{itemize}
-
-\textbf{ConvertEase Discord Bot}
-\begin{itemize}[left=5pt,itemsep=-4pt]
-\vspace{-4pt}
-\item Automated file processing and conversions using \textbf{Python}, including error-tolerant command parsing.
-\item Reduced conversion times by 50\% through optimized algorithms and caching techniques.
-\end{itemize}
-
-\end{document}
-
-""".strip()
-
 
 def chunk_rich_text(s: str, chunk: int = 1900):
     s = s or ""
@@ -335,16 +193,15 @@ def merge_with_master_preamble(master: str, tex: str) -> str:
     return preamble + "\n" + body + "\n" + r"\end{document}"
 
 def count_itemize_items(latex: str) -> int:
-    # counts \item occurrences (rough but effective for mutation control)
-    # count \item anywhere (LLMs sometimes inline \item after \begin{itemize})
-    return len(re.findall(r"\\item\b", latex))
+    # counts \coloredbullet occurrences
+    return len(re.findall(r"\\coloredbullet", latex))
 
 def require_same_section_markers(master: str, tailored: str) -> None:
     required = [
-        r"\section*{\color{mygreen}{EDUCATION}}",
-        r"\section*{\color{mygreen}{SKILLS}}",
-        r"\section*{\color{mygreen}{EXPERIENCE}}",
-        r"\section*{\color{mygreen}{PROJECTS}}",
+        r"\section{Education}",
+        r"\section{Skills}",
+        r"\section{Experience}",
+        r"\section{Notable Projects}",
     ]
     for m in required:
         if m not in tailored:
@@ -356,14 +213,14 @@ def require_same_section_markers(master: str, tailored: str) -> None:
             raise RuntimeError(f"pipeline_error: master missing section marker {m}")
 
 def require_no_new_companies(master: str, tailored: str) -> None:
-    # simplest guard: tailored cannot contain bold employer lines not in master
-    # compare all \textbf{...} lines (coarse but strong)
-    master_bold = set(re.findall(r"\\textbf\{([^}]+)\}", master))
-    tailored_bold = set(re.findall(r"\\textbf\{([^}]+)\}", tailored))
-    # allow tailored subset, but forbid new bold entries (new roles/projects)
-    new_bold = sorted([b for b in tailored_bold if b not in master_bold])
-    if new_bold:
-        raise RuntimeError("mutation_violation: introduced new \\textbf entries: " + ", ".join(new_bold[:10]))
+    # simplest guard: tailored cannot contain new \datedexperience entries
+    # compare all \datedexperience{...} lines
+    master_companies = set(re.findall(r"\\datedexperience\{([^}]+)\}", master))
+    tailored_companies = set(re.findall(r"\\datedexperience\{([^}]+)\}", tailored))
+    
+    new_companies = sorted([c for c in tailored_companies if c not in master_companies])
+    if new_companies:
+        raise RuntimeError("mutation_violation: introduced new companies: " + ", ".join(new_companies[:10]))
 
 def require_bullet_count_stable(
     master: str, tailored: str, max_drop: int = 10, max_add: int = 10
@@ -377,6 +234,12 @@ def require_bullet_count_stable(
 def compile_pdf(tex_path: pathlib.Path) -> pathlib.Path:
     out_dir = tex_path.parent
     try:
+        # Copy .cls file to out_dir if it exists in templates
+        cls_src = pathlib.Path(__file__).parent / "templates" / "muratcan_cv.cls"
+        if cls_src.exists():
+            import shutil
+            shutil.copy(cls_src, out_dir / "muratcan_cv.cls")
+
         subprocess.run(
             ["tectonic", tex_path.name, "--outdir", "."],
             cwd=str(out_dir),
@@ -418,6 +281,13 @@ def main():
     run_id = uuid.uuid4().hex[:10]
     model_name = os.getenv("MODEL_NAME", os.getenv("GEMINI_MODEL", "gemini"))
     prompt_version = os.getenv("PROMPT_VERSION", "v1")
+
+    # Load templates
+    templates_dir = pathlib.Path(__file__).parent / "templates"
+    master_latex_path = templates_dir / "Om_Patel_Resume.tex"
+    if not master_latex_path.exists():
+        raise RuntimeError(f"Master LaTeX not found at {master_latex_path}")
+    master_latex = master_latex_path.read_text(encoding="utf-8")
 
     remote = os.environ["RCLONE_REMOTE"]  # e.g. gdrive
     drive_root = os.environ.get("DRIVE_ROOT", "JobApps")
@@ -479,7 +349,7 @@ def main():
 
         try:
             pack = generate_apply_pack(
-                master_latex=MASTER_LATEX,
+                master_latex=master_latex,
                 jd=jd,
                 company=company,
                 role=role,
@@ -504,18 +374,18 @@ def main():
                     f"LLM output missing LaTeX field. Keys={list(pack.keys())}"
                 )
             tailored_latex = sanitize_latex(tailored_raw)
-            tailored_latex = merge_with_master_preamble(MASTER_LATEX, tailored_latex)
+            tailored_latex = merge_with_master_preamble(master_latex, tailored_latex)
 
             ok, reason = looks_like_latex_resume(tailored_latex)
             # Mutation guards: fail fast if AI changed structure
-            require_same_section_markers(MASTER_LATEX, tailored_latex)
+            require_same_section_markers(master_latex, tailored_latex)
             try:
                 require_bullet_count_stable(
-                    MASTER_LATEX, tailored_latex, max_drop=10, max_add=10
+                    master_latex, tailored_latex, max_drop=10, max_add=10
                 )
             except RuntimeError:
                 pack = generate_apply_pack(
-                    master_latex=MASTER_LATEX,
+                    master_latex=master_latex,
                     jd=jd,
                     company=company,
                     role=role,
@@ -543,9 +413,9 @@ def main():
                 tailored_latex = sanitize_latex(tailored_raw)
 
                 ok, reason = looks_like_latex_resume(tailored_latex)
-                require_same_section_markers(MASTER_LATEX, tailored_latex)
+                require_same_section_markers(master_latex, tailored_latex)
                 require_bullet_count_stable(
-                    MASTER_LATEX, tailored_latex, max_drop=10, max_add=10
+                    master_latex, tailored_latex, max_drop=10, max_add=10
                 )
 
             fit_score = pack.get("fit_score", 0)

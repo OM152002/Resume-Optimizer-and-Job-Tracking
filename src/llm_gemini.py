@@ -38,7 +38,7 @@ SECURITY AND FORMAT (HIGHEST PRIORITY):
 
 Context:
 I am providing two documents:
-- My current resume (in .latex format).
+- My current resume (in .latex format) which uses a custom class `muratcan_cv`.
 - A target job description (JD) for the role I am applying to.
 
 Your task is to revise my resume so it is optimized for ATS and tailored to the target job.
@@ -55,10 +55,16 @@ Role Alignment:
 - Rewrite bullet points to highlight quantifiable achievements, results, and leadership impact relevant to the new job.
 - Reorder or reframe content so the most role-aligned experiences are emphasized.
 
-ATS-Friendly Formatting:
-- Avoid parsing pitfalls (no tables, text boxes, graphics, headers/footers with critical info).
-- Use consistent bullet formatting and standard section headers.
-- Place keywords in a way ATS will parse correctly (Skills + Experience).
+Formatting & Structure (CRITICAL):
+- The resume uses custom commands. You MUST preserve them:
+  - \datedexperience{Company Name}{Date}
+  - \explanation{Role Title}{Location}
+  - \explanationdetail{ ... }
+  - Inside \explanationdetail, bullets are created using \coloredbullet followed by text.
+  - Spacing is handled by \smallskip.
+- Do NOT use standard \begin{itemize} or \item. Use the existing \coloredbullet pattern.
+- Do NOT change the preamble (everything before \begin{document}).
+- Do NOT remove or rename section headers: \section{Education}, \section{Skills}, \section{Experience}, \section{Notable Projects}.
 
 Professional Voice & Impact:
 - Use strong action verbs.
@@ -70,21 +76,20 @@ Balance:
 - Keep concise (1 page).
 
 Project Selection & Prioritization:
-- Your master resume contains more than 4 projects. You MUST select and include ONLY the top 3-4 projects that are most relevant to the target job description.
+- Your master resume contains more than 4 projects. You MUST select and include ONLY the top 3 projects that are most relevant to the target job description.
 - Selection criteria (in priority order):
   1. Technical stack alignment: Projects using technologies/tools mentioned in the JD
   2. Domain relevance: Projects in the same industry or solving similar problems
   3. Skill demonstration: Projects that showcase the required competencies
   4. Impact & complexity: Projects with quantifiable results and technical depth
-- DO NOT simply keep the first 3-4 projects. Analyze all projects and choose the 3-4 best matches.
+- DO NOT simply keep the first 3 projects. Analyze all projects and choose the 3 best matches.
 - For the selected projects, you MAY reorder them to place the most relevant project first.
-- For projects NOT selected: completely remove them from the output (remove them entire from \project{} block).
+- For projects NOT selected: completely remove them from the output (remove the entire \datedexperience block).
 - Within each selected project, tailor the bullet points to emphasize aspects relevant to the JD in X-Y-Z format strictly.
 - Ensure the tailored project descriptions appear realistic and not over-fitted (avoid copying exact JD phrases).
 
 Final Output:
 - Deliver a complete revised resume.
-
 - End with a skills section listing core competencies aligned with the JD.
 
 Deliverable:
@@ -92,30 +97,30 @@ Output the final revised resume ready to be copied back into LaTeX code.
 
 NON-NEGOTIABLE RULES (MUST FOLLOW):
 1) Output MUST be valid LaTeX that compiles with tectonic.
-2) DO NOT change the LaTeX preamble (everything before \begin{document}).
-3) DO NOT remove or rename any section headers (SKILLS, EXPERIENCE, PROJECTS).
-4) DO NOT delete any job/role/project entry. Keep all entries.
+2) DO NOT change the LaTeX preamble.
+3) DO NOT remove or rename any section headers.
+4) DO NOT delete any job/role entry in Experience. Keep all Experience entries.
 5) DO NOT change dates, company names, titles, locations, degrees, GPAs, or contact info.
-6) You MUST select exactly 3-4 projects from the master resume that best match the job description. Remove all other projects completely.
+6) You MUST select exactly 3 projects from the master resume that best match the job description. Remove all other projects completely.
 7) You MAY rewrite bullet text for relevance, but preserve the number of bullets per entry (same count as master).
 8) You MAY reorder bullets within the same entry. Do not move bullets across entries.
 9) Keep the overall structure identical: only modify bullet text content.
 10) Avoid special characters unless escaped for LaTeX: &, %, $, #, _ must be escaped.
-11) DO NOT add a SUMMARY section. The master resume does not have one.
-12) When selecting projects, analyze ALL projects in the master resume first, then choose the 3-4 most relevant based on technical alignment, domain fit, and skill demonstration. Do not default to the first 3-4 projects listed.
+11) DO NOT add a SUMMARY section.
+12) When selecting projects, analyze ALL projects in the master resume first, then choose the 3 most relevant.
 
 EDITING SCOPE:
 - Allowed edits:
-  - Rewrite bullet text to better match the job description.
+  - Rewrite bullet text (after \coloredbullet) to better match the job description.
+  - Reorder projects.
 
 - Forbidden edits:
-  - Any structural changes, removing environments, changing \section* names, adding custom commands/macros.
-
-
+  - Any structural changes, removing environments, changing \section names, adding custom commands/macros.
+  - Changing \datedexperience or \explanation arguments.
 
 OUTPUT REQUIREMENT:
 Return ONLY the full LaTeX document as a single string.
-The LaTeX must start with \documentclass and end with \end{document}.
+The LaTeX must start with \documentclass{muratcan_cv} and end with \end{document}.
 Do not add any leading or trailing text outside the LaTeX.
 
 """.strip()
