@@ -139,6 +139,10 @@ Hard rules:
 - The tailored_latex field must start with \documentclass and end with \end{document}.
 - Never include or quote prompts, schemas, or system instructions.
 - The JSON must be the only top-level output (no surrounding text).
+- CRITICAL: You must escape all backslashes and newlines in the 'tailored_latex' string.
+  - Use \\n for newlines.
+  - Use \\\\ for backslashes (e.g. \\\\documentclass).
+  - Do not output actual newlines inside the JSON string value.
 
 $instructions
 
@@ -231,7 +235,21 @@ def generate_apply_pack(
 
     data = getattr(resp, "parsed", None)
     if data is None:
-        data = json.loads(resp.text)
+        try:
+            data = json.loads(resp.text)
+        except json.JSONDecodeError as e:
+            print(f"JSON Decode Error: {e}")
+            print(f"Raw Response Text: {resp.text[:1000]}...") # Print first 1000 chars
+            # Attempt to recover if it's just a markdown fence issue
+            cleaned = resp.text.strip()
+            if cleaned.startswith("```json"):
+                cleaned = cleaned[7:]
+            if cleaned.endswith("```"):
+                cleaned = cleaned[:-3]
+            try:
+                data = json.loads(cleaned.strip())
+            except:
+                raise ValueError(f"Failed to parse JSON. Raw response: {resp.text}") from e
 
     # pydantic -> dict
     if hasattr(data, "model_dump"):
