@@ -171,7 +171,7 @@ def sanitize_latex(tex: str) -> str:
     tex = "\n".join(lines)
 
     tex = normalize_unicode(tex)
-    tex = escape_tex_specials(tex)
+    # tex = escape_tex_specials(tex) # DO NOT ESCAPE SPECIALS IN FULL LATEX DOC
 
     # hard fail early with a clearer error
     if not tex.lstrip().startswith(r"\documentclass"):
