@@ -234,12 +234,6 @@ def require_bullet_count_stable(
 def compile_pdf(tex_path: pathlib.Path) -> pathlib.Path:
     out_dir = tex_path.parent
     try:
-        # Copy .cls file to out_dir if it exists in templates
-        cls_src = pathlib.Path(__file__).parent / "templates" / "muratcan_cv.cls"
-        if cls_src.exists():
-            import shutil
-            shutil.copy(cls_src, out_dir / "muratcan_cv.cls")
-
         subprocess.run(
             ["tectonic", tex_path.name, "--outdir", "."],
             cwd=str(out_dir),

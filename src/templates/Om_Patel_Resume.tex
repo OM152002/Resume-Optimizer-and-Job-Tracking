@@ -1,4 +1,131 @@
-\documentclass{muratcan_cv}
+\documentclass[11pt]{article}
+
+% ----------------------------------------------------------------------------------------
+% INLINED CLASS DEFINITIONS (formerly muratcan_cv.cls)
+% ----------------------------------------------------------------------------------------
+\usepackage[dvipsnames]{xcolor}
+\usepackage[sfdefault]{noto}
+\usepackage{etoolbox}
+\usepackage{pgffor}
+\usepackage{titlesec}
+\usepackage{tikz}
+\usepackage{fontspec}
+\usepackage[left=0.5in,top=0.1in,right=0.5in,bottom=0.1in]{geometry}
+\usepackage{hyperref}
+\usepackage{fontawesome}
+\usepackage{mfirstuc}
+\usepackage{ifthen}
+\usepackage{lipsum}
+\usepackage{array}
+\pagestyle{empty}
+\usepackage{comment}
+
+\makeatletter
+
+%Setup
+\newcommand*{\setname}[2]{\def\@firstname{#1}\def\@lastname{#2}}
+\newcommand*{\setaddress}[1]{\def\@address{#1}}
+\newcommand*{\setmobile}[1]{\def\@mobile{#1}}
+\newcommand*{\setposition}[1]{\def\@position{#1}}
+\newcommand*{\setmail}[1]{\def\@mail{#1}}
+\newcommand*{\setcitizenship}[1]{\def\@citizenship{#1}}
+\newcommand*{\setthemecolor}[1]{\def\@themecolor{#1}}
+\newcommand*{\setlinkedinaccount}[1]{\def\@linkedinaccount{#1}}
+%\newcommand*{\setgithubaccount}[1]{\def\@githubaccount{#1}}
+\newcommand*{\setportfolio}[1]{\def\@portfolio{#1}}
+
+\hypersetup{
+    colorlinks=true,
+    urlcolor=NavyBlue, % URL COLOR!
+}
+
+% Header
+\newcommand\headerview{
+\hfill
+\begin{minipage}{0.55\linewidth} % extend header length here
+    \center \name \\[0.05cm] 
+    \contact % address \ mobile \\ mail
+\end{minipage}
+\hfill
+}
+    
+\newcommand{\githubview}{\href{\@linkedinaccount}{\faLinkedinSquare\ \footnotesize linkedin}}
+%\newcommand{\linkedinview}{\href{\@githubaccount}{\faGithubSquare\ \footnotesize github}}
+\newcommand{\portfolioview}{\href{\@portfolio}{\faGlobe\ \footnotesize portfolio}}
+
+\newcommand{\name}{%
+    {\LARGE \color{\@themecolor} \@firstname \ \textsc{\@lastname}}
+}
+
+\newcommand{\contact}{%
+        % {\small \@address  \cps \@citizenship \\ \@mobile \cps \@mail% %%OLD
+        {\small \@mail \ \cpshalf \@mobile %
+        \\%
+        \githubview \cpshalf \portfolioview \\ 
+        } % 
+}
+
+
+% Helper commands
+\newcommand\ruleafter[1]{#1~{\color{black!60!\@themecolor}\hrulefill}} % a trick to put the line with <before> parameter in \titleformat
+
+%colorful pipe separator
+\newcommand{\cps}{{\color{\@themecolor} \quad\textbar\quad}}
+\newcommand{\cpshalf}{{\color{\@themecolor} \textbar\hspace{0.2em}}}
+\newcommand{\coloredbullet}{{\color{\@themecolor} \textbullet}}
+
+% Edit section styles
+\titleformat{\section}      % Customise the \section command 
+  {\large\bfseries\scshape\raggedright\color{\@themecolor}} % Make the \section headers large (\Large),
+                               % small capitals (\scshape) and left aligned (\raggedright)
+  {}{0em}                      % Can be used to give a prefix to all sections, like 'Section ...'
+  {\ruleafter}                           % Can be used to insert code before the heading
+
+\titlespacing*{\section}{-1pt}{-10pt}{0pt}
+
+% Textview commands
+\newcommand{\experience}[2]{%
+  \mbox { \hspace{1em} \scshape \textbf{#1} }%
+}
+
+\newcommand{\datetext}[1]{%
+{\itshape  \footnotesize \mdseries  \color{black} #1 } 
+}
+
+\newcommand{\datetextbold}[1]{%
+{\footnotesize \mdseries  \color{black} \textbf{#1} } 
+}
+
+\newcommand{\datedexperience}[2]{%
+  \begin{small} \mbox { \hspace{1em} \textbf{#1} } \end{small} \hfill \datetextbold{#2}\\[0.01cm] %
+}
+
+\newcommand{\explanation}[2]{%
+    \mbox { \hspace{1.2em} \footnotesize \emph{#1}} \hfill \datetext{#2}\\[0.01cm] %
+}
+
+\newcommand{\explanationdetail}[1]{%
+    \indent \indent \begin{minipage}{0.87\linewidth} \footnotesize #1 \end{minipage} \\[0.1cm]
+}
+
+\newcommand\createskill[2]{%
+    \textbf{#1} & #2
+}
+
+\newcommand\createskills[1]{%
+\explanationdetail{
+  \begin{tabular}{rl}
+    \makeatletter
+    \@for\thisitem:=#1\do{\thisitem\\[0.1cm]}
+    \makeatother
+    \end{tabular}
+}
+}
+
+\makeatother
+% ----------------------------------------------------------------------------------------
+% END INLINED CLASS DEFINITIONS
+% ----------------------------------------------------------------------------------------
 
 \setname{Om Kiranbhai Patel}{}
 \setaddress{Tempe, United States}
@@ -6,7 +133,7 @@
 \setmail{ompatel0584@gmail.com}
 % \setcitizenship{Eldian Citizen}
 \setlinkedinaccount{https://www.linkedin.com/in/om-patel-1512om} 
-%\setgithubaccount{https://github.com/OM152002} 
+\setgithubaccount{https://github.com/OM152002} 
 \setportfolio{https://ompatel.info}
 \setthemecolor{MidnightBlue}
 
