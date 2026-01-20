@@ -235,11 +235,11 @@ def compile_pdf(tex_path: pathlib.Path) -> pathlib.Path:
     out_dir = tex_path.parent
     try:
         # Copy .cls file to out_dir if it exists in templates
-        cls_src = pathlib.Path(__file__).parent / "templates" / "muratcan_cv.cls"
+        cls_src = pathlib.Path(__file__).parent / "templates" / "om_patel.cls"
         if cls_src.exists():
             import shutil
-            shutil.copy(cls_src, out_dir / "muratcan_cv.cls")
-            print(f"Copied {cls_src} to {out_dir / 'muratcan_cv.cls'}")
+            shutil.copy(cls_src, out_dir / "om_patel.cls")
+            print(f"Copied {cls_src} to {out_dir / 'om_patel.cls'}")
         else:
             print(f"WARNING: Class file not found at {cls_src}")
 

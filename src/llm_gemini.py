@@ -120,7 +120,7 @@ EDITING SCOPE:
 
 OUTPUT REQUIREMENT:
 Return ONLY the full LaTeX document as a single string.
-The LaTeX must start with \documentclass{muratcan_cv} and end with \end{document}.
+The LaTeX must start with \documentclass{om_patel} and end with \end{document}.
 Do not add any leading or trailing text outside the LaTeX.
 
 """.strip()
